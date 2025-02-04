@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <title>蓝桥物流系统 - 货物托运凭证</title>
     <link rel="stylesheet" href="/static/css/order.css">
 </head>
-
 <body>
     <div class="container">
         <h2 style="text-align: center;">货物托运凭证</h2>
@@ -15,27 +13,27 @@
             <table class="orderTable">
                 <tr>
                     <th>运单号</th>
-                    <td><input type="text" id="orderNo" name="orderNo" required value="#"></td>
+                    <td><input type="text" id="orderNo" name="orderNo" required value=""></td>
                     <th>货号</th>
-                    <td><input type="text" id="productCode" name="productCode" value="#"></td>
+                    <td><input type="text" id="productCode" name="productCode" value=""></td>
                 </tr>
                 <tr>
                     <th>发货方</th>
-                    <td><input type="text" id="senderName" name="senderName" required value="#"></td>
+                    <td><input type="text" id="senderName" name="senderName" required value=""></td>
                     <th>收货方</th>
-                    <td><input type="text" id="receiverName" name="receiverName" required value="#"></td>
+                    <td><input type="text" id="receiverName" name="receiverName" required value=""></td>
                 </tr>
                 <tr>
                     <th>手机号</th>
-                    <td><input type="text" id="senderPhone" name="senderPhone" required value="#"></td>
+                    <td><input type="text" id="senderPhone" name="senderPhone" required value=""></td>
                     <th>手机号</th>
-                    <td><input type="text" id="receiverPhone" name="receiverPhone" required value="#"></td>
+                    <td><input type="text" id="receiverPhone" name="receiverPhone" required value=""></td>
                 </tr>
                 <tr>
                     <th>详细地址</th>
-                    <td><input type="text" id="senderAddress" name="senderAddress" required value="#"></td>
+                    <td><input type="text" id="senderAddress" name="senderAddress" required value=""></td>
                     <th>详细地址</th>
-                    <td><input type="text" id="receiverAddress" name="receiverAddress" required value="#"></td>
+                    <td><input type="text" id="receiverAddress" name="receiverAddress" required value=""></td>
                 </tr>
                 <!-- 更多表单项可以按照类似的方式添加 -->
             </table>
@@ -54,14 +52,8 @@
                 </thead>
                 <tbody id="goodsTbody">
                     <tr>
-                        <td><select name="items[0][productName]">
-                                <option value="item1">物品1</option>
-                                <option value="item2">物品2</option>
-                            </select></td>
-                        <td><select name="items[0][packageType]">
-                                <option value="box">箱子</option>
-                                <option value="bag">袋子</option>
-                            </select></td>
+                        <td><input type="text" name="items[0][productName]" required></td>
+                        <td><input type="text" name="items[0][packageType]" required></td>
                         <td><input type="number" step="1" name="items[0][quantity]" required value="1"></td>
                         <td><input type="number" step="0.1" name="items[0][weight]" required value="0.0"></td>
                         <td><input type="number" step="0.1" name="items[0][volume]" required value="0.0"></td>
@@ -78,7 +70,13 @@
                         <th>总运费</th>
                         <td><input type="number" id="totalFee" name="totalFee" required value="0"></td>
                         <th>付款方式</th>
-                        <td><input type="text" id="paymentMethod" name="paymentMethod" required value="提付"></td>
+                        <td>
+                            <select id="paymentMethod" name="paymentMethod" required>
+                                <option value="提付">提付</option>
+                                <option value="到付">到付</option>
+                                <option value="月结">月结</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <th>回单要求</th>
@@ -113,5 +111,4 @@
 
     <script src="/static/js/order.js"></script>
 </body>
-
 </html>

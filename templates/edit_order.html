@@ -60,18 +60,8 @@
             <tbody id="goodsTbody">
             {% for item in order.items.all %}
                 <tr>
-                    <td>
-                        <select name="items[{{ forloop.counter0 }}][productName]">
-                            <option value="item1" {% if item.item_name == 'item1' %}selected{% endif %}>物品1</option>
-                            <option value="item2" {% if item.item_name == 'item2' %}selected{% endif %}>物品2</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="items[{{ forloop.counter0 }}][packageType]">
-                            <option value="box" {% if item.package_type == 'box' %}selected{% endif %}>箱子</option>
-                            <option value="bag" {% if item.package_type == 'bag' %}selected{% endif %}>袋子</option>
-                        </select>
-                    </td>
+                    <td><input type="text" name="items[0][productName]" required></td>
+                    <td><input type="text" name="items[0][packageType]" required></td>
                     <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][quantity]" required
                                value="{{ item.quantity }}"></td>
                     <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][weight]" required

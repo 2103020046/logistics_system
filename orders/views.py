@@ -52,6 +52,9 @@ def create_order(request):
             i = 0
             while True:
                 try:
+                    item_key = f'items[{i}][productName]'
+                    if item_key not in request.POST:  # 检查是否存在该键
+                        break
                     item_data = {
                         'order_id': order.id,
                         'item_name': request.POST[f'items[{i}][productName]'],
@@ -64,7 +67,6 @@ def create_order(request):
                     items.append(Item.objects.create(**item_data))
                     i += 1
                 except (KeyError, ValueError) as e:
-                    # 如果解析商品数据时出错，则给出具体错误信息
                     return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
                 except IndexError:
                     break
@@ -87,6 +89,7 @@ def orders(request):
 def order_history(request):
     orders = Order.objects.all().prefetch_related('items')
     return render(request, 'order_history.html', {'orders': orders})
+
 
 def get_order_detail(request, order_id):
     try:
