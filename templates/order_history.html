@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>历史订单</title>
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .modal-content {
+            padding: 20px;
+        }
+
+        .goods-table {
+            margin-top: 20px;
+        }
+
+        .goods-table th {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>历史订单</h2>
+    <table class="table table-hover">
+        <thead class="table-light">
+        <tr>
+            <th>运单号</th>
+            <th>发货方</th>
+            <th>收货方</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.order_number }}</td>
+                <td>{{ order.sender }}</td>
+                <td>{{ order.receiver }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="showOrderDetail({{ order.id }})">查看</button>
+                    <a href="{% url 'edit_order' order.id %}" class="btn btn-sm btn-warning">编辑</a>
+                    <button class="btn btn-sm btn-danger" onclick="deleteOrder({{ order.id }})">删除</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 模态框 -->
+<div class="modal fade" id="detailModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">订单详情 - <span id="orderNumber"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>发货方：</strong><span id="senderName"></span></p>
+                        <p><strong>发货电话：</strong><span id="senderPhone"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>收货方：</strong><span id="receiverName"></span></p>
+                        <p><strong>收货电话：</strong><span id="receiverPhone"></span></p>
+                    </div>
+                </div>
+
+                <table class="table goods-table">
+                    <thead>
+                    <tr>
+                        <th>品名</th>
+                        <th>包装</th>
+                        <th>件数</th>
+                        <th>重量(kg)</th>
+                        <th>体积(m³)</th>
+                        <th>运费(元)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="goodsBody">
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ item.item_name }}</td>
+                            <td>{{ item.package_type }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.weight }}</td>
+                            <td>{{ item.volume }}</td>
+                            <td>{{ item.freight }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>总运费：</strong>¥<span id="totalFreight">{{ order.total_fee }}</span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>付款方式：</strong><span id="paymentMethod">{{ order.payment_method }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>详细地址：</strong><span id="senderAddress">{{ order.sender_address }}</span></p>
+                        <p><strong>承运商：</strong><span id="carrierDetail">{{ order.carrier }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>到站电话：</strong><span
+                                id="arrivalStationPhone">{{ order.arrival_station_phone }}</span></p>
+                        <p><strong>中转费：</strong>¥<span id="transitFee">{{ order.transit_fee }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/jquery/jquery-3.7.1.min.js"></script>
+<script src="/static/bootstrap5/bootstrap.min.js"></script>
+<script>
+    function showOrderDetail(orderId) {
+        console.log('showOrderDetail called with orderId:', orderId);
+        $.get(`/api/orders/${orderId}/`, function (response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                $('#orderNumber').text(data.order_number);
+                $('#senderName').text(data.sender);
+                $('#senderPhone').text(data.sender_phone);
+                $('#receiverName').text(data.receiver);
+                $('#receiverPhone').text(data.receiver_phone);
+                $('#totalFreight').text(data.total_freight ? data.total_freight.toFixed(2) : 'N/A');
+                $('#paymentMethod').text(data.payment_method);
+                $('#carrier').text(data.carrier);
+                $('#senderAddress').text(data.sender_address);
+                $('#carrierDetail').text(data.carrier);
+                $('#arrivalStationPhone').text(data.arrival_station_phone);
+                $('#transitFee').text(data.transfer_fee !== undefined ? data.transfer_fee.toFixed(2) : 'N/A');
+
+                // 填充商品数据
+                $('#goodsBody').empty();
+                data.items.forEach(item => {
+                    $('#goodsBody').append(`
+                            <tr>
+                                <td>${item.item_name}</td>
+                                <td>${item.package_type}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.weight.toFixed(1)}</td>
+                                <td>${item.volume.toFixed(1)}</td>
+                                <td>¥${item.freight.toFixed(2)}</td>
+                            </tr>
+                        `);
+                });
+
+                new bootstrap.Modal(document.getElementById('detailModal')).show();
+            }
+        }).fail(function () {
+            alert('获取订单详情失败');
+        });
+    }
+
+    function deleteOrder(orderId) {
+        if (confirm('确定要删除这个订单吗？')) {
+            fetch(`/orders/delete/${orderId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

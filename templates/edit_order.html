@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>蓝桥物流系统 - 编辑货物托运凭证</title>
+    <link rel="stylesheet" href="/static/css/order.css">
+</head>
+
+<body>
+<div class="container">
+    <h2 style="text-align: center;">编辑货物托运凭证</h2>
+    <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
+        {% csrf_token %}
+        <!-- 订单信息表 -->
+        <table class="orderTable">
+            <tr>
+                <th>运单号</th>
+                <td><input type="text" id="orderNo" name="orderNo" required value="{{ order.order_no }}"></td>
+                <th>货号</th>
+                <td><input type="text" id="productCode" name="productCode" value="{{ order.product_code }}"></td>
+            </tr>
+            <tr>
+                <th>发货方</th>
+                <td><input type="text" id="senderName" name="senderName" required value="{{ order.sender }}"></td>
+                <th>收货方</th>
+                <td><input type="text" id="receiverName" name="receiverName" required value="{{ order.receiver }}"></td>
+            </tr>
+            <tr>
+                <th>手机号</th>
+                <td><input type="text" id="senderPhone" name="senderPhone" required value="{{ order.sender_phone }}">
+                </td>
+                <th>手机号</th>
+                <td><input type="text" id="receiverPhone" name="receiverPhone" required
+                           value="{{ order.receiver_phone }}"></td>
+            </tr>
+            <tr>
+                <th>详细地址</th>
+                <td><input type="text" id="senderAddress" name="senderAddress" required
+                           value="{{ order.sender_address }}"></td>
+                <th>详细地址</th>
+                <td><input type="text" id="receiverAddress" name="receiverAddress" required
+                           value="{{ order.receiver_address }}"></td>
+            </tr>
+            <!-- 更多表单项可以按照类似的方式添加 -->
+        </table>
+
+        <!-- 货物信息表 -->
+        <table class="goodsTable">
+            <thead>
+            <tr>
+                <th>品名</th>
+                <th>包装</th>
+                <th>件数</th>
+                <th>重量(kg)</th>
+                <th>体积(m³)</th>
+                <th>运费(元)</th>
+            </tr>
+            </thead>
+            <tbody id="goodsTbody">
+            {% for item in order.items.all %}
+                <tr>
+                    <td>
+                        <select name="items[{{ forloop.counter0 }}][productName]">
+                            <option value="item1" {% if item.item_name == 'item1' %}selected{% endif %}>物品1</option>
+                            <option value="item2" {% if item.item_name == 'item2' %}selected{% endif %}>物品2</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="items[{{ forloop.counter0 }}][packageType]">
+                            <option value="box" {% if item.package_type == 'box' %}selected{% endif %}>箱子</option>
+                            <option value="bag" {% if item.package_type == 'bag' %}selected{% endif %}>袋子</option>
+                        </select>
+                    </td>
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][quantity]" required
+                               value="{{ item.quantity }}"></td>
+                    <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][weight]" required
+                               value="{{ item.weight }}"></td>
+                    <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][volume]" required
+                               value="{{ item.volume }}"></td>
+                    <td><input type="number" step="0.01" name="items[{{ forloop.counter0 }}][freight]" required
+                               value="{{ item.freight }}"></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" onclick="addGoodsRow()">新增一行</button>
+
+        <!-- 额外信息表 -->
+        <div class="additionalInfo">
+            <table class="additionalTable">
+                <tr>
+                    <th>总运费</th>
+                    <td><input type="number" id="totalFee" name="totalFee" required value="{{ order.total_fee }}"></td>
+                    <th>付款方式</th>
+                    <td><input type="text" id="paymentMethod" name="paymentMethod" required
+                               value="{{ order.payment_method }}"></td>
+                </tr>
+                <tr>
+                    <th>回单要求</th>
+                    <td><input type="text" id="returnRequirement" name="returnRequirement"
+                               value="{{ order.return_requirement }}"></td>
+                    <th>其他支出</th>
+                    <td><input type="text" id="otherExpenses" name="otherExpenses" value="{{ order.other_expenses }}">
+                    </td>
+                    <th>费用说明</th>
+                    <td><input type="text" id="feeDescription" name="feeDescription"
+                               value="{{ order.fee_description }}"></td>
+                </tr>
+                <tr>
+                    <th>承运商</th>
+                    <td><input type="text" id="carrier" name="carrier" required value="{{ order.carrier }}"></td>
+                    <th>承运网点</th>
+                    <td><input type="text" id="carrierBranch" name="carrierBranch" required
+                               value="{{ order.carrier_branch }}"></td>
+                    <th>发站电话</th>
+                    <td><input type="text" id="departureStationPhone" name="departureStationPhone"
+                               value="{{ order.departure_station_phone }}"></td>
+                </tr>
+                <tr>
+                    <th>中转费</th>
+                    <td><input type="number" id="transitFee" name="transitFee" required value="{{ order.transit_fee }}">
+                    </td>
+                    <th>到站</th>
+                    <td><input type="text" id="arrivalStation" name="arrivalStation"
+                               value="{{ order.arrival_station }}"></td>
+                    <th>到站电话</th>
+                    <td><input type="text" id="arrivalStationPhone" name="arrivalStationPhone"
+                               value="{{ order.arrival_station_phone }}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <button type="submit" style="float:right;">提交订单</button>
+    </form>
+    <a href="{% url 'order_history' %}" class="btn btn-secondary">返回历史订单</a>
+</div>
+
+<script src="/static/js/order.js"></script>
+</body>
+
+</html>
