@@ -42,12 +42,19 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
 
     // 发送数据到后端
     fetch('/api/orders/', {
-        method: 'POST', body: formData
+        method: 'POST',
+        body: formData
     })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
                 alert('订单已成功提交');
+                const userConfirm = confirm('是否现在查看订单预览？');
+                if (userConfirm) {
+                    previewOrder();
+                }
+                const orderId = data.orderId;
+                return fetch(`/api/orders/${orderId}`, {method: 'GET'});
             } else {
                 alert(`提交订单失败：${data.message}`);
             }
@@ -58,31 +65,63 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
         });
 });
 
-// 动态添加货物行的函数
-// function addGoodsRow() {
-//     const tbody = document.getElementById('goodsTbody');
-//     const newRow = `
-//         <tr>
-//             <td><input type="text" name="items[${tbody.rows.length}][productName]" required></td>
-//             <td><input type="text" name="items[${tbody.rows.length}][packageType]" required></td>
-//             <td><input type="number" step="1" name="items[${tbody.rows.length}][quantity]" required value="1"></td>
-//             <td><input type="number" step="0.1" name="items[${tbody.rows.length}][weight]" required value="0.0"></td>
-//             <td><input type="number" step="0.1" name="items[${tbody.rows.length}][volume]" required value="0.0"></td>
-//             <td><input type="number" step="0.01" name="items[${tbody.rows.length}][freight]" required value="0.00"></td>
-//         </tr>`;
-//     tbody.insertAdjacentHTML('beforeend', newRow);
-// }
-
 function addGoodsRow() {
+    // 获取当前行数，用于生成唯一的name属性
     const tbody = document.getElementById('goodsTbody');
-    const newRow = `
-        <tr>
-            <td><input type="text" name="items[${tbody.rows.length}][productName]" required></td>
-            <td><input type="text" name="items[${tbody.rows.length}][packageType]" required></td>
-            <td><input type="number" step="1"></td>
-            <td><input type="number" step="0.1"></td>
-            <td><input type="number" step="0.1"></td>
-            <td><input type="number" step="0.01"></td>
-        </tr>`;
-    tbody.insertAdjacentHTML('beforeend', newRow);
+    const rowCount = tbody.rows.length;
+
+    // 创建新的行元素
+    const newRow = document.createElement('tr');
+
+    // 动态创建并填充每个单元格的内容
+    newRow.innerHTML = `
+      <td><input type="text" name="items[${rowCount}][productName]" required></td>
+      <td><input type="text" name="items[${rowCount}][packageType]" required></td>
+      <td><input type="number" step="1" name="items[${rowCount}][quantity]" value="1"></td>
+      <td><input type="number" step="0.1" name="items[${rowCount}][weight]" value="0.0"></td>
+      <td><input type="number" step="0.1" name="items[${rowCount}][volume]" value="0.0"></td>
+      <td><input type="number" step="0.01" name="items[${rowCount}][deliveryCharge]" value="0.00"></td>
+      <td><input type="number" step="0.01" name="items[${rowCount}][insuranceFee]" value="0.00"></td>
+      <td><input type="number" step="0.01" name="items[${rowCount}][packagingFee]" value="0.00"></td>
+      <td><input type="number" step="0.01" name="items[${rowCount}][goodsValue]" value="0.00"></td>
+      <td><input type="number" step="0.01" name="items[${rowCount}][freight]" value="0.00"></td>
+      <td><input type="text" name="items[${rowCount}][remarks]"></td>
+  `;
+
+    // 将新行插入到表格中
+    tbody.appendChild(newRow);
 }
+
+
+function previewOrder() {
+    // 创建一个新的窗口
+    const previewWindow = window.open('', '_blank');
+
+    // 获取所有表格的数据
+    const orderDetails = document.querySelector('.orderTable').outerHTML;
+    const goodsDetails = document.querySelector('.goodsTable').outerHTML;
+    const additionalDetails = document.querySelector('.additionalTable').outerHTML;
+
+    // 构建要显示的内容
+    let content = `
+        <html>
+            <head>
+                <title>订单预览 - 双木林物流系统</title>
+                <!-- 确保样式一致 -->
+                <link rel="stylesheet" href="/static/css/order.css">
+            </head>
+            <body>
+                <h2 style="text-align: center;">货物托运单 - 预览</h2>
+                ${orderDetails}
+                ${goodsDetails}
+                ${additionalDetails}
+                <button onclick="window.print();">打印</button>
+            </body>
+        </html>
+    `;
+
+    // 在新窗口中显示内容
+    previewWindow.document.write(content);
+    previewWindow.document.close();
+}
+

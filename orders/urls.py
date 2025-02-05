@@ -2,7 +2,6 @@
 from django.urls import path
 from . import views  # 确保导入了视图函数
 
-
 urlpatterns = [
     path('', views.index, name='index'),
     path('order', views.orders, name='order'),
@@ -11,5 +10,6 @@ urlpatterns = [
     path('api/orders/<int:order_id>/', views.get_order_detail, name='order_detail'),
     path('orders/edit/<int:order_id>/', views.edit_order, name='edit_order'),
     path('orders/delete/<int:order_id>/', views.delete_order, name='delete_order'),
+    path('login/', views.login_view, name='login'),
 
 ]

@@ -1,43 +1,53 @@
-body {
+/* order.css */
+
+/* 确保容器是居中的块级元素 */
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
-.container {
-  width: 90%;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
+/* 表格样式 */
 .orderTable,
 .goodsTable,
 .additionalTable {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
 }
 
+/* 表格单元格的边框和内边距 */
 .orderTable th,
 .orderTable td,
 .goodsTable th,
 .goodsTable td,
 .additionalTable th,
 .additionalTable td {
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
 }
 
+/* 表头背景颜色 */
+.orderTable th,
 .goodsTable th,
 .additionalTable th {
-  background-color: #f2f2f2;
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
 
-.additionalInfo {
-  margin-top: 20px;
+/* 隔行变色 */
+.goodsTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* 悬停行高亮 */
+.goodsTable tr:hover {
+  background-color: #e5e5e5;
 }
 
 button {
@@ -53,3 +63,32 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+/* 输入字段样式 */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 8px;
+  margin: 4px 0;
+  /*border: 1px solid #ccc;*/
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: calc(100% - 10px);
+  border: none;
+}
+
+/* 标题样式 */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+/* 新增：确保在合并单元格时输入框能占满整个单元格 */
+.orderTable input[type="text"],
+.orderTable input[type="number"],
+.orderTable select {
+  width: 99%;
+  /* 略小于100%避免因边框导致溢出 */
+}
+

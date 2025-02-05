@@ -127,6 +127,31 @@
 </div>
 
 <script src="/static/js/order.js"></script>
+<script>
+    function updateOrder(orderId, updatedData) {
+        fetch(`/api/orders/${orderId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('订单已成功更新');
+                    // 可选：刷新页面或导航到订单历史页
+                    window.location.href = '/orders/';
+                } else {
+                    alert(`更新订单失败：${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('更新订单失败，请重试');
+            });
+    }
+</script>
 </body>
 
 </html>

@@ -60,10 +60,18 @@
                     <div class="col-md-6">
                         <p><strong>发货方：</strong><span id="senderName"></span></p>
                         <p><strong>发货电话：</strong><span id="senderPhone"></span></p>
+                        <p><strong>送（提）货费：</strong>¥<span id="deliveryCharge"></span></p>
+                        <p><strong>保险费：</strong>¥<span id="insuranceFee"></span></p>
+                        <p><strong>包装费：</strong>¥<span id="packagingFee"></span></p>
+                        <p><strong>货物价值：</strong>¥<span id="goodsValue"></span></p>
                     </div>
                     <div class="col-md-6">
                         <p><strong>收货方：</strong><span id="receiverName"></span></p>
                         <p><strong>收货电话：</strong><span id="receiverPhone"></span></p>
+                        <p><strong>日期：</strong><span id="date"></span></p>
+                        <p><strong>发站：</strong><span id="departureStation"></span></p>
+                        <p><strong>到站：</strong><span id="arrivalStation"></span></p>
+                        <p><strong>运输方式：</strong><span id="transportMethod"></span></p>
                     </div>
                 </div>
 
@@ -79,34 +87,32 @@
                     </tr>
                     </thead>
                     <tbody id="goodsBody">
-                    {% for item in order.items.all %}
-                        <tr>
-                            <td>{{ item.item_name }}</td>
-                            <td>{{ item.package_type }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.weight }}</td>
-                            <td>{{ item.volume }}</td>
-                            <td>{{ item.freight }}</td>
-                        </tr>
-                    {% endfor %}
+                    <!-- 动态填充商品数据 -->
                     </tbody>
                 </table>
 
                 <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>总运费：</strong>¥<span id="totalFreight">{{ order.total_fee }}</span></p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>付款方式：</strong><span id="paymentMethod">{{ order.payment_method }}</span></p>
+                    <div class="col-md-6">
+                        <p><strong>总运费：</strong>¥<span id="totalFreight"></span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>详细地址：</strong><span id="senderAddress">{{ order.sender_address }}</span></p>
-                        <p><strong>承运商：</strong><span id="carrierDetail">{{ order.carrier }}</span></p>
+                        <p><strong>付款方式：</strong><span id="paymentMethod"></span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>到站电话：</strong><span
-                                id="arrivalStationPhone">{{ order.arrival_station_phone }}</span></p>
-                        <p><strong>中转费：</strong>¥<span id="transitFee">{{ order.transit_fee }}</span></p>
+                        <p><strong>详细地址：</strong><span id="senderAddress"></span></p>
+                        <p><strong>承运商：</strong><span id="carrierDetail"></span></p>
+                        <p><strong>交货方式：</strong><span id="deliveryMethod"></span></p>
+                        <p><strong>发货人签名：</strong><span id="senderSign"></span></p>
+                        <p><strong>收货人签名：</strong><span id="receiverSign"></span></p>
+                        <p><strong>身份证号：</strong><span id="idCard"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>到站电话：</strong><span id="arrivalStationPhone"></span></p>
+                        <p><strong>客户单号：</strong><span id="customerOrderNo"></span></p>
+                        <p><strong>回单要求：</strong><span id="returnRequirement"></span></p>
+                        <p><strong>其他支出：</strong>¥<span id="otherExpenses"></span></p>
+                        <p><strong>费用说明：</strong><span id="feeDescription"></span></p>
+                        <p><strong>制单人：</strong><span id="orderMaker"></span></p>
                     </div>
                 </div>
             </div>
@@ -127,27 +133,43 @@
                 $('#senderPhone').text(data.sender_phone);
                 $('#receiverName').text(data.receiver);
                 $('#receiverPhone').text(data.receiver_phone);
+                $('#deliveryCharge').text(data.delivery_charge ? data.delivery_charge.toFixed(2) : 'N/A');
+                $('#insuranceFee').text(data.insurance_fee ? data.insurance_fee.toFixed(2) : 'N/A');
+                $('#packagingFee').text(data.packaging_fee ? data.packaging_fee.toFixed(2) : 'N/A');
+                $('#goodsValue').text(data.goods_value ? data.goods_value.toFixed(2) : 'N/A');
+                $('#date').text(data.date);
+                $('#departureStation').text(data.departure_station);
+                $('#arrivalStation').text(data.arrival_station);
+                $('#transportMethod').text(data.transport_method);
                 $('#totalFreight').text(data.total_freight ? data.total_freight.toFixed(2) : 'N/A');
                 $('#paymentMethod').text(data.payment_method);
-                $('#carrier').text(data.carrier);
-                $('#senderAddress').text(data.sender_address);
                 $('#carrierDetail').text(data.carrier);
-                $('#arrivalStationPhone').text(data.arrival_station_phone);
-                $('#transitFee').text(data.transfer_fee !== undefined ? data.transfer_fee.toFixed(2) : 'N/A');
+                $('#senderAddress').text(data.sender_address || 'N/A'); // 处理空值
+                $('#departureStationPhone').text(data.departure_station_phone || 'N/A'); // 处理空值
+                $('#arrivalStationPhone').text(data.arrival_station_phone || 'N/A'); // 处理空值
+                $('#customerOrderNo').text(data.customer_order_no !== undefined ? data.customer_order_no : 'N/A');
+                $('#returnRequirement').text(data.return_requirement);
+                $('#otherExpenses').text(data.other_expenses ? data.other_expenses.toFixed(2) : 'N/A');
+                $('#feeDescription').text(data.fee_description);
+                $('#deliveryMethod').text(data.delivery_method);
+                $('#senderSign').text(data.sender_sign);
+                $('#receiverSign').text(data.receiver_sign);
+                $('#idCard').text(data.id_card);
+                $('#orderMaker').text(data.order_maker);
 
                 // 填充商品数据
                 $('#goodsBody').empty();
                 data.items.forEach(item => {
                     $('#goodsBody').append(`
-                            <tr>
-                                <td>${item.item_name}</td>
-                                <td>${item.package_type}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.weight.toFixed(1)}</td>
-                                <td>${item.volume.toFixed(1)}</td>
-                                <td>¥${item.freight.toFixed(2)}</td>
-                            </tr>
-                        `);
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td>${item.package_type}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.weight.toFixed(1)}</td>
+                        <td>${item.volume.toFixed(1)}</td>
+                        <td>¥${item.freight.toFixed(2)}</td>
+                    </tr>
+                `);
                 });
 
                 new bootstrap.Modal(document.getElementById('detailModal')).show();

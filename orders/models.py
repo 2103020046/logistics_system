@@ -13,15 +13,30 @@ class Order(models.Model):
     receiver_address = models.TextField(verbose_name='详细地址', default='Default Carrier')
 
     # 其他信息
-    total_freight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总运费', default='12')
+    total_freight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总运费', default='12.00')
     payment_method = models.CharField(max_length=50, verbose_name='付款方式', default='Default Carrier')
-    other_expenses = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='其他支出', default='12')
+    other_expenses = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='其他支出', default='12.00')
     expense_details = models.TextField(blank=True, null=True, verbose_name='费用说明', default='Default Carrier')
     carrier = models.CharField(max_length=100, verbose_name='承运商', default='Default Carrier')
     carrier_net = models.CharField(max_length=100, verbose_name='承运网点', default='Default Carrier_net')
     departure_station_phone = models.CharField(max_length=20, verbose_name='发站电话', blank=True, null=True)
     arrival_station_phone = models.CharField(max_length=20, verbose_name='到站电话', default='000-000-0000')
-    transfer_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='中转费', default='111')
+    customer_order_no = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='客户单号', default='111.00')
+
+    # 新增字段
+    delivery_charge = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='送（提）货费', default=0.00)
+    insurance_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='保险费', default=0.00)
+    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='包装费', default=0.00)
+    goods_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='货物价值', default=0.00)
+    date = models.CharField(max_length=20,verbose_name='日期', blank=True, null=True)
+    departure_station = models.CharField(max_length=100, verbose_name='发站', blank=True, null=True)
+    arrival_station = models.CharField(max_length=100, verbose_name='到站', blank=True, null=True)
+    transport_method = models.CharField(max_length=100, verbose_name='运输方式', blank=True, null=True)
+    delivery_method = models.CharField(max_length=100, verbose_name='交货方式', blank=True, null=True)
+    sender_sign = models.CharField(max_length=100, verbose_name='发货人签名', blank=True, null=True)
+    receiver_sign = models.CharField(max_length=100, verbose_name='收货人签名', blank=True, null=True)
+    id_card = models.CharField(max_length=20, verbose_name='身份证号', blank=True, null=True)
+    order_maker = models.CharField(max_length=100, verbose_name='制单人', blank=True, null=True)
 
     def __str__(self):
         return self.order_number
@@ -41,11 +56,3 @@ class Item(models.Model):
 
     def __str__(self):
         return f'{self.item_name} ({self.quantity} 件)'
-
-
-if __name__ == "__main__":
-    # 当脚本被直接运行时执行这里的代码
-    print("This script is being run directly.")
-else:
-    # 当脚本被作为模块导入时执行这里的代码
-    print(f"This script is imported by another module, and its name is {__name__}.")

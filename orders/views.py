@@ -1,11 +1,12 @@
 # views.py
-from django.shortcuts import render
 from .models import Order, Item
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import logging
 from django.shortcuts import get_object_or_404, redirect
-
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 # 配置日志记录
 logger = logging.getLogger(__name__)
 
@@ -32,9 +33,22 @@ def create_order(request):
                 'expense_details': request.POST.get('feeDescription', ''),
                 'carrier': request.POST.get('carrier', ''),
                 'carrier_net': request.POST.get('carrierBranch', ''),
-                'departure_station_phone': request.POST.get('departureStationPhone', None),
-                'arrival_station_phone': request.POST.get('arrivalStationPhone', ''),
-                'transfer_fee': request.POST.get('transitFee', 0)
+                'departure_station_phone': request.POST.get('departureStationPhone', None),  # 新增字段
+                'arrival_station_phone': request.POST.get('arrivalStationPhone', ''),  # 新增字段
+                'customer_order_no': request.POST.get('customerOrderNo', ''),  # 新增字段
+                'delivery_charge': request.POST.get('deliveryCharge', 0),  # 新增字段
+                'insurance_fee': request.POST.get('insuranceFee', 0),  # 新增字段
+                'packaging_fee': request.POST.get('packagingFee', 0),  # 新增字段
+                'goods_value': request.POST.get('goodsValue', 0),  # 新增字段
+                'date': request.POST.get('date'),  # 新增字段
+                'departure_station': request.POST.get('departureStation'),  # 新增字段
+                'arrival_station': request.POST.get('arrivalStation'),  # 新增字段
+                'transport_method': request.POST.get('transportMethod'),  # 新增字段
+                'delivery_method': request.POST.get('deliveryMethod'),  # 新增字段
+                'sender_sign': request.POST.get('senderSign'),  # 新增字段
+                'receiver_sign': request.POST.get('receiverSign'),  # 新增字段
+                'id_card': request.POST.get('idCard'),  # 新增字段
+                'order_maker': request.POST.get('orderMaker')  # 新增字段
             }
 
             # 确保所有必需字段都有值
@@ -71,11 +85,19 @@ def create_order(request):
                 except IndexError:
                     break
 
+                # 返回包含 orderId 的 JSON 响应
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Order created successfully',
+                    'orderId': order.id  # 添加 orderId 到响应中
+                })
+
             return JsonResponse({'status': 'success'})
         except Exception as e:
             logger.error(f"Unexpected error creating order: {str(e)}", exc_info=True)
-            return JsonResponse({'status': 'error', 'message': 'An unexpected error occurred. Please try again later.'},
-                                status=500)
+            return JsonResponse(
+                {'status': 'error', 'message': f' {str(e)},An unexpected error occurred. Please try again later.'},
+                status=500)
 
 
 def index(request):
@@ -155,3 +177,17 @@ def delete_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order.delete()
     return JsonResponse({'status': 'success'})
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, '用户名或密码错误，请重试。')
+    return render(request, 'login.html')
