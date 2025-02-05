@@ -1,12 +1,17 @@
 # views.py
+from django.contrib.auth.models import User
+
 from .models import Order, Item
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import logging
 from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+
 # 配置日志记录
 logger = logging.getLogger(__name__)
 
@@ -104,10 +109,24 @@ def index(request):
     return render(request, 'index.html')
 
 
+def custom_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+
+@custom_login_required
+@login_required
 def orders(request):
     return render(request, 'order.html')
 
 
+@custom_login_required
+@login_required
 def order_history(request):
     orders = Order.objects.all().prefetch_related('items')
     return render(request, 'order_history.html', {'orders': orders})
@@ -179,7 +198,6 @@ def delete_order(request, order_id):
     return JsonResponse({'status': 'success'})
 
 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -191,3 +209,24 @@ def login_view(request):
         else:
             messages.error(request, '用户名或密码错误，请重试。')
     return render(request, 'login.html')
+
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+
+        if password1 != password2:
+            messages.error(request, '两次输入的密码不一致，请重试。')
+        else:
+            user = User.objects.create_user(username=username, password=password1)
+            login(request, user)  # 自动登录新用户
+            messages.success(request, '注册成功！')
+            return redirect('/')
+    return render(request, 'register.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')

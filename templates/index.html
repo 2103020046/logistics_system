@@ -7,70 +7,111 @@
     <link rel="stylesheet" href="/static/css/index.css">
 </head>
 <body>
-    <!-- 导航条 -->
-    <nav>
-        <div class="logo">物流开单平台</div>
-        <div class="nav-links">
-            <a href="#home">首页</a>
-            <a href="#about">关于我们</a>
-            <a href="#contact">联系我们</a>
-            <a href="login">登录</a>
-            <a href="register.html" style="background-color: #e67e22;">注册</a>
-        </div>
-    </nav>
+<!-- 导航条 -->
+<nav>
+    <div class="logo">物流开单平台</div>
+    <div class="nav-links">
+        <a href="/">首页</a>
+        <a href="#about">关于我们</a>
+        <a href="#contact">联系我们</a>
+        {% if user.is_authenticated %}
+            <!-- 内联样式的用户名 -->
+            <span style="color: white; font-weight: bold; font-size: 20px;">
+                {{ user.username }}
+            </span>
+            <!-- 或者使用{{ user.email }}显示用户邮箱 -->
+            <a href="{% url 'logout' %}">注销</a>
+        {% else %}
+            <a href="login/">登录</a>
+            <a href="register/" style="background-color: #e67e22;">注册</a>
+        {% endif %}
+    </div>
+</nav>
 
-    <!-- 主要内容 -->
-    <div class="container">
-        <div class="hero-section">
-            <h1>欢迎使用物流开单平台</h1>
-            <p>快速创建和管理您的物流订单</p>
-            
-            <div class="cta-buttons">
-                <a href="order" class="cta-button primary">新建订单</a>
-                <a href="history" class="cta-button secondary">查看历史订单</a>
-            </div>
-        </div>
+<!-- 主要内容 -->
+<div class="container">
+    <div class="hero-section">
+        <h1>欢迎使用物流开单平台</h1>
+        <p>快速创建和管理您的物流订单</p>
 
-        <!-- 功能展示 -->
-        <div class="features">
-            <div class="feature-card">
-                <h3>快速开单</h3>
-                <p>简单三步完成物流订单创建</p>
-            </div>
-            <div class="feature-card">
-                <h3>订单追踪</h3>
-                <p>实时查看物流状态和位置</p>
-            </div>
-            <div class="feature-card">
-                <h3>数据统计</h3>
-                <p>可视化报表助力业务决策</p>
-            </div>
+        <div class="cta-buttons">
+            <a href="order/" class="cta-button primary">新建订单</a>
+            <a href="history/" class="cta-button secondary">查看历史订单</a>
         </div>
     </div>
 
-    <script>
-        // 简单的路由跳转示例
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const section = document.querySelector(this.getAttribute('href'));
-                if(section) {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
+    <!-- 功能展示 -->
+    <div class="features">
+        <div class="feature-card">
+            <h3>快速开单</h3>
+            <p>简单三步完成物流订单创建</p>
+        </div>
+        <div class="feature-card">
+            <h3>订单追踪</h3>
+            <p>实时查看物流状态和位置</p>
+        </div>
+        <div class="feature-card">
+            <h3>数据统计</h3>
+            <p>可视化报表助力业务决策</p>
+        </div>
+    </div>
+</div>
 
-        // 注册页面跳转示例
-        document.querySelector('a[href="register.html"]').addEventListener('click', function(e) {
+<script>
+    // 简单的路由跳转示例
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            window.location.href = 'register.html';
+            const section = document.querySelector(this.getAttribute('href'));
+            if (section) {
+                section.scrollIntoView({behavior: 'smooth'});
+            }
         });
+    });
 
-        // 登录页面跳转示例
-        document.querySelector('a[href="login.html"]').addEventListener('click', function(e) {
+    // 注册页面跳转示例
+    document.querySelector('a[href="register.html"]').addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = 'register.html';
+    });
+
+    // 登录页面跳转示例
+    document.querySelector('a[href="login.html"]').addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = 'login.html';
+    });
+
+    document.querySelectorAll('.cta-button').forEach(button => {
+        button.addEventListener('click', function (e) {
             e.preventDefault();
-            window.location.href = 'login.html';
+            if (!isLoggedIn()) {
+                window.location.href = 'login.html';
+            } else {
+                window.location.href = this.getAttribute('href');
+            }
         });
-    </script>
+    });
+
+    function updateNavLinks() {
+        const loginLink = document.querySelector('a[href="login/"]');
+        const registerLink = document.querySelector('a[href="register/"]');
+        const logoutLink = document.querySelector('a[href="logout/"]');
+
+        if (isLoggedIn()) {
+            loginLink.style.display = 'none';
+            registerLink.style.display = 'none';
+            logoutLink.style.display = 'block';
+        } else {
+            loginLink.style.display = 'block';
+            registerLink.style.display = 'block';
+            logoutLink.style.display = 'none';
+        }
+    }
+
+    // 监听登录和注销事件
+    document.querySelector('a[href="login/"]').addEventListener('click', updateNavLinks);
+    document.querySelector('a[href="logout/"]').addEventListener('click', updateNavLinks);
+
+</script>
 </body>
 </html>
