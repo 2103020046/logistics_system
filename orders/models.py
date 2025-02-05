@@ -5,29 +5,28 @@ class Order(models.Model):
     # 订单基本信息
     order_number = models.CharField(max_length=50, unique=True, verbose_name='运单号', default='123456789')
     sender = models.CharField(max_length=100, verbose_name='发货方', default='Default Carrier')
-    sender_phone = models.CharField(max_length=20, verbose_name='手机号', default='000-000-0000')
-    sender_address = models.TextField(verbose_name='详细地址', default='Default Carrier')
-
+    sender_phone = models.CharField(max_length=20, verbose_name='发货方手机号', default='000-000-0000')
+    sender_address = models.TextField(verbose_name='发货详细地址', default='Default Carrier')
+    product_code = models.CharField(max_length=50, verbose_name='货号', blank=True, null=True)
     receiver = models.CharField(max_length=100, verbose_name='收货方', default='Default Carrier')
-    receiver_phone = models.CharField(max_length=20, verbose_name='手机号', default='000-000-0000')
-    receiver_address = models.TextField(verbose_name='详细地址', default='Default Carrier')
+    receiver_phone = models.CharField(max_length=20, verbose_name='收货方手机号', default='000-000-0000')
+    receiver_address = models.TextField(verbose_name='收货详细地址', default='Default Carrier')
 
     # 其他信息
     total_freight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='总运费', default='12.00')
     payment_method = models.CharField(max_length=50, verbose_name='付款方式', default='Default Carrier')
+    return_requirement = models.CharField(max_length=50, verbose_name='回单要求', default='Default returnRequirement')
     other_expenses = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='其他支出', default='12.00')
     expense_details = models.TextField(blank=True, null=True, verbose_name='费用说明', default='Default Carrier')
     carrier = models.CharField(max_length=100, verbose_name='承运商', default='Default Carrier')
-    carrier_net = models.CharField(max_length=100, verbose_name='承运网点', default='Default Carrier_net')
-    departure_station_phone = models.CharField(max_length=20, verbose_name='发站电话', blank=True, null=True)
-    arrival_station_phone = models.CharField(max_length=20, verbose_name='到站电话', default='000-000-0000')
-    customer_order_no = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='客户单号', default='111.00')
+    carrier_address = models.CharField(max_length=100, verbose_name='发站地址', default='Default Carrier_net')
+    arrival_address = models.CharField(max_length=100, verbose_name='到站地址', default='Default Carrier_net')
+    departure_station_phone = models.CharField(max_length=20, verbose_name='发站查询电话', blank=True, null=True)
+    arrival_station_phone = models.CharField(max_length=20, verbose_name='到站查询电话', default='000-000-0000')
+    customer_order_no = models.CharField(max_length=50, verbose_name='客户单号', default='')
 
     # 新增字段
-    delivery_charge = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='送（提）货费', default=0.00)
-    insurance_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='保险费', default=0.00)
-    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='包装费', default=0.00)
-    goods_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='货物价值', default=0.00)
+
     date = models.CharField(max_length=20,verbose_name='日期', blank=True, null=True)
     departure_station = models.CharField(max_length=100, verbose_name='发站', blank=True, null=True)
     arrival_station = models.CharField(max_length=100, verbose_name='到站', blank=True, null=True)
@@ -52,7 +51,13 @@ class Item(models.Model):
     quantity = models.IntegerField(verbose_name='件数')
     weight = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='重量(kg)')
     volume = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='体积(m³)')
+    delivery_charge = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='送（提）货费', default=0.00)
+    insurance_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='保险费', default=0.00)
+    packaging_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='包装费', default=0.00)
+    goods_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='货物价值', default=0.00)
     freight = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='运费(元)')
+    remarks = models.CharField(max_length=50, verbose_name='备注', default="无")
+
 
     def __str__(self):
         return f'{self.item_name} ({self.quantity} 件)'

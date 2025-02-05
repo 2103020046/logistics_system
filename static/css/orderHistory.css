@@ -1,0 +1,81 @@
+/* 模态框的基本样式 */
+.modal {
+    display: none; /* 默认隐藏，通过JavaScript控制显示 */
+    position: fixed; /* 固定定位，确保模态框始终在页面的中心位置 */
+    z-index: 1; /* 设置z-index以确保模态框位于其他内容之上 */
+    left: 0;
+    top: 0;
+    width: 100%; /* 全屏宽，覆盖整个浏览器窗口 */
+    height: 100%; /* 全屏高，覆盖整个浏览器窗口 */
+    overflow: auto; /* 启用滚动条，当内容超出视口大小时允许滚动 */
+    background-color: rgb(0, 0, 0); /* 黑色背景 */
+    background-color: rgba(0, 0, 0, 0.4); /* 半透明黑色背景，提供视觉上的遮罩效果 */
+}
+
+/* 模态框的内容容器样式 */
+.modal-content {
+    background-color: #fefefe; /* 白色背景，对比于半透明的模态框背景 */
+    margin: 15% auto; /* 顶部和水平居中对齐，使用15%的margin-top来调整垂直位置 */
+    padding: 20px; /* 内边距为20px，给内容留出空间 */
+    border: 1px solid #888; /* 灰色细边框，增加视觉分离 */
+    width: 80%; /* 宽度占屏幕的80%，可以根据需要调整 */
+    max-width: 900px; /* 最大宽度限制为900px，避免在大屏幕上过宽 */
+}
+
+/* 关闭按钮的样式 */
+.close {
+    color: #aaa; /* 浅灰色文字颜色 */
+    float: right; /* 右浮动，使其位于模态框标题的右侧 */
+    font-size: 28px; /* 较大的字体尺寸，易于点击 */
+    font-weight: bold; /* 加粗，增强可见性 */
+}
+
+/* 关闭按钮悬停或聚焦时的样式 */
+.close:hover,
+.close:focus {
+    color: black; /* 颜色变为黑色，提高交互反馈 */
+    text-decoration: none; /* 去除下划线 */
+    cursor: pointer; /* 鼠标指针变为手型，指示可点击 */
+}
+
+/* 订单信息表格的基本样式 */
+.info-table {
+    width: 100%; /* 表格宽度与模态框相同，充分利用可用空间 */
+    border-collapse: collapse; /* 合并单元格边框，使表格看起来更整洁 */
+    margin-bottom: 20px; /* 底部外边距，为下方元素留出空间 */
+}
+
+/* 表头单元格的样式 */
+.info-table th {
+    background: #f8f9fa; /* 轻微灰白色的背景，区分表头与数据行 */
+    padding: 10px; /* 内边距，给文本留出空间 */
+    text-align: left; /* 文本左对齐 */
+    border: 1px solid #ddd; /* 细边框，保持单元格之间的分隔 */
+}
+
+/* 数据单元格的样式 */
+.info-table td {
+    padding: 10px; /* 内边距，给文本留出空间 */
+    border: 1px solid #ddd; /* 细边框，保持单元格之间的分隔 */
+}
+
+/* 商品信息表格的基本样式 */
+.goods-table {
+    width: 100%; /* 表格宽度与模态框相同，充分利用可用空间 */
+    border-collapse: collapse; /* 合并单元格边框，使表格看起来更整洁 */
+    margin-top: 20px; /* 顶部外边距，为上方元素留出空间 */
+}
+
+/* 商品信息表格表头单元格的样式 */
+.goods-table th {
+    background: #f8f9fa; /* 轻微灰白色的背景，区分表头与数据行 */
+    padding: 10px; /* 内边距，给文本留出空间 */
+    text-align: left; /* 文本左对齐 */
+    border: 1px solid #ddd; /* 细边框，保持单元格之间的分隔 */
+}
+
+/* 商品信息表格数据单元格的样式 */
+.goods-table td {
+    padding: 10px; /* 内边距，给文本留出空间 */
+    border: 1px solid #ddd; /* 细边框，保持单元格之间的分隔 */
+}

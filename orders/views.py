@@ -1,6 +1,6 @@
 # views.py
 from django.contrib.auth.models import User
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Order, Item
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -25,35 +25,34 @@ def create_order(request):
 
             # 解析表单数据
             order_data = {
-                'order_number': request.POST.get('orderNo'),
-                'sender': request.POST.get('senderName', ''),
-                'sender_phone': request.POST.get('senderPhone', ''),
-                'sender_address': request.POST.get('senderAddress', ''),
-                'receiver': request.POST.get('receiverName', ''),
-                'receiver_phone': request.POST.get('receiverPhone', ''),
-                'receiver_address': request.POST.get('receiverAddress', ''),
-                'total_freight': request.POST.get('totalFee', 0),
-                'payment_method': request.POST.get('paymentMethod', ''),
-                'other_expenses': request.POST.get('otherExpenses', 0),
-                'expense_details': request.POST.get('feeDescription', ''),
-                'carrier': request.POST.get('carrier', ''),
-                'carrier_net': request.POST.get('carrierBranch', ''),
-                'departure_station_phone': request.POST.get('departureStationPhone', None),  # 新增字段
-                'arrival_station_phone': request.POST.get('arrivalStationPhone', ''),  # 新增字段
-                'customer_order_no': request.POST.get('customerOrderNo', ''),  # 新增字段
-                'delivery_charge': request.POST.get('deliveryCharge', 0),  # 新增字段
-                'insurance_fee': request.POST.get('insuranceFee', 0),  # 新增字段
-                'packaging_fee': request.POST.get('packagingFee', 0),  # 新增字段
-                'goods_value': request.POST.get('goodsValue', 0),  # 新增字段
-                'date': request.POST.get('date'),  # 新增字段
-                'departure_station': request.POST.get('departureStation'),  # 新增字段
-                'arrival_station': request.POST.get('arrivalStation'),  # 新增字段
-                'transport_method': request.POST.get('transportMethod'),  # 新增字段
-                'delivery_method': request.POST.get('deliveryMethod'),  # 新增字段
-                'sender_sign': request.POST.get('senderSign'),  # 新增字段
-                'receiver_sign': request.POST.get('receiverSign'),  # 新增字段
-                'id_card': request.POST.get('idCard'),  # 新增字段
-                'order_maker': request.POST.get('orderMaker')  # 新增字段
+                'order_number': request.POST.get('orderNo'),  # 运单号
+                'sender': request.POST.get('senderName', ''),  # 发货人
+                'sender_phone': request.POST.get('senderPhone', ''),  # 发货人手机号
+                'sender_address': request.POST.get('senderAddress', ''),  # 发货详细地址
+                'product_code': request.POST.get('productCode', ''),  # 货号
+                'receiver': request.POST.get('receiverName', ''),  # 收货方
+                'receiver_phone': request.POST.get('receiverPhone', ''),  # 收货人手机号
+                'receiver_address': request.POST.get('receiverAddress', ''),  # 收货详细地址
+                'total_freight': request.POST.get('totalFee', 0),  # 总费用
+                'payment_method': request.POST.get('paymentMethod', ''),  # 支付方式
+                'return_requirement': request.POST.get('returnRequirement', ''),  # 回单要求
+                'other_expenses': request.POST.get('otherExpenses', 0),  # 其他支出
+                'expense_details': request.POST.get('feeDescription', ''),  # 费用说明
+                'carrier': request.POST.get('carrier', ''),  # 承运商
+                'carrier_address': request.POST.get('carrierAddress', ''),  # 到站地址
+                'arrival_address': request.POST.get('arrivalAddress', ''),  # 发站地址
+                'departure_station_phone': request.POST.get('departureStationPhone', None),  # 发站查询电话
+                'arrival_station_phone': request.POST.get('arrivalStationPhone', ''),  # 到站查询电话
+                'customer_order_no': request.POST.get('customerOrderNo', ''),  # 客户单号
+                'date': request.POST.get('date'),  # 日期
+                'departure_station': request.POST.get('departureStation'),  # 发站
+                'arrival_station': request.POST.get('arrivalStation'),  # 到站
+                'transport_method': request.POST.get('transportMethod'),  # 运输方式
+                'delivery_method': request.POST.get('deliveryMethod'),  # 交货方式
+                'sender_sign': request.POST.get('senderSign'),  # 发货人签名
+                'receiver_sign': request.POST.get('receiverSign'),  # 收货人签名
+                'id_card': request.POST.get('idCard'),  # 身份证号
+                'order_maker': request.POST.get('orderMaker')  # 制单人
             }
 
             # 确保所有必需字段都有值
@@ -76,12 +75,17 @@ def create_order(request):
                         break
                     item_data = {
                         'order_id': order.id,
-                        'item_name': request.POST[f'items[{i}][productName]'],
-                        'package_type': request.POST[f'items[{i}][packageType]'],
-                        'quantity': int(request.POST[f'items[{i}][quantity]']),
-                        'weight': float(request.POST[f'items[{i}][weight]']),
-                        'volume': float(request.POST[f'items[{i}][volume]']),
-                        'freight': float(request.POST[f'items[{i}][freight]'])
+                        'item_name': request.POST[f'items[{i}][productName]'],  # 品名
+                        'package_type': request.POST[f'items[{i}][packageType]'],  # 包装
+                        'quantity': int(request.POST[f'items[{i}][quantity]']),  # 件数
+                        'weight': float(request.POST[f'items[{i}][weight]']),  # 重量
+                        'volume': float(request.POST[f'items[{i}][volume]']),  # 体积
+                        'delivery_charge': request.POST.get('deliveryCharge', 0),  # 送（提）货费
+                        'insurance_fee': request.POST.get('insuranceFee', 0),  # 保险费
+                        'packaging_fee': request.POST.get('packagingFee', 0),  # 包装费
+                        'goods_value': request.POST.get('goodsValue', 0),  # 货物价值
+                        'remarks': request.POST.get('remarks', 0),  # 备注
+                        'freight': float(request.POST[f'items[{i}][freight]'])  # 运费
                     }
                     items.append(Item.objects.create(**item_data))
                     i += 1
@@ -118,7 +122,6 @@ def custom_login_required(view_func):
     return wrapper
 
 
-
 @custom_login_required
 @login_required
 def orders(request):
@@ -128,36 +131,77 @@ def orders(request):
 @custom_login_required
 @login_required
 def order_history(request):
-    orders = Order.objects.all().prefetch_related('items')
-    return render(request, 'order_history.html', {'orders': orders})
+    # 获取所有订单数据
+    orders = Order.objects.all()
+
+    # 分页设置
+    paginator = Paginator(orders, 10)  # 每页显示10条数据
+    page = request.GET.get('page')  # 获取当前页码
+
+    try:
+        orders_page = paginator.page(page)
+    except PageNotAnInteger:
+        # 如果页码不是整数，则返回第一页
+        orders_page = paginator.page(1)
+    except EmptyPage:
+        # 如果页码超出范围，则返回最后一页
+        orders_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'order_history.html', {'orders': orders_page})
 
 
+@csrf_exempt
 def get_order_detail(request, order_id):
     try:
-        order = Order.objects.prefetch_related('items').get(id=order_id)
-        data = {
+        order = Order.objects.get(id=order_id)
+        items = order.items.all()  # 获取所有关联的商品信息
+        items_data = [{
+            'item_name': item.item_name,
+            'package_type': item.package_type,
+            'quantity': item.quantity,
+            'weight': str(item.weight),  # 转换为字符串以避免 JSON 序列化问题
+            'volume': str(item.volume),
+            'delivery_charge': str(item.delivery_charge),
+            'insurance_fee': str(item.insurance_fee),
+            'packaging_fee': str(item.packaging_fee),
+            'goods_value': str(item.goods_value),
+            'remarks': str(item.remarks),
+            'freight': str(item.freight),
+        } for item in items]
+
+        return JsonResponse({
             'order_number': order.order_number,
             'sender': order.sender,
-            'receiver': order.receiver,
             'sender_phone': order.sender_phone,
+            'sender_address': order.sender_address,
+            'product_code': order.product_code,
+            'receiver': order.receiver,
             'receiver_phone': order.receiver_phone,
-            'total_freight': float(order.total_freight),
+            'receiver_address': order.receiver_address,
+            'total_freight': str(order.total_freight),  # 转换为字符串
             'payment_method': order.payment_method,
+            'other_expenses': str(order.other_expenses),  # 转换为字符串
+            'expense_details': order.expense_details,
             'carrier': order.carrier,
-            'items': [
-                {
-                    'item_name': item.item_name,
-                    'package_type': item.package_type,
-                    'quantity': item.quantity,
-                    'weight': float(item.weight),
-                    'volume': float(item.volume),
-                    'freight': float(item.freight)
-                } for item in order.items.all()
-            ]
-        }
-        return JsonResponse({'status': 'success', 'data': data})
+            'carrier_address': order.carrier_address,
+            'arrival_address': order.arrival_address,
+            'return_requirement': order.return_requirement,
+            'departure_station_phone': order.departure_station_phone,
+            'arrival_station_phone': order.arrival_station_phone,
+            'customer_order_no': order.customer_order_no,
+            'date': order.date,
+            'departure_station': order.departure_station,
+            'arrival_station': order.arrival_station,
+            'transport_method': order.transport_method,
+            'delivery_method': order.delivery_method,
+            'sender_sign': order.sender_sign,
+            'receiver_sign': order.receiver_sign,
+            'id_card': order.id_card,
+            'order_maker': order.order_maker,
+            'items': items_data,  # 返回商品信息
+        })
     except Order.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': '订单不存在'})
+        return JsonResponse({'error': 'Order not found'}, status=404)
 
 
 def edit_order(request, order_id):
