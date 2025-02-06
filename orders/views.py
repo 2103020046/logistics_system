@@ -56,8 +56,7 @@ def create_order(request):
             }
 
             # 确保所有必需字段都有值
-            required_fields = ['order_number', 'sender', 'sender_phone', 'sender_address', 'receiver', 'receiver_phone',
-                               'receiver_address']
+            required_fields = ['order_number', 'sender', 'receiver', 'receiver_phone', 'receiver_address']
             for field in required_fields:
                 if not order_data[field]:
                     return JsonResponse({'status': 'error', 'message': f'Missing required field: {field}'}, status=400)

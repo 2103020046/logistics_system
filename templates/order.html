@@ -17,15 +17,15 @@
                 <th>日期</th>
                 <td><input type="text" id="date" name="date" required></td>
                 <th>发站</th>
-                <td><input type="text" id="departureStation" name="departureStation" required></td>
+                <td><input type="text" id="departureStation" name="departureStation" value="广州" required></td>
                 <th>到站</th>
-                <td><input type="text" id="arrivalStation" name="arrivalStation" required></td>
+                <td><input type="text" id="arrivalStation" name="arrivalStation" value="霍尔果斯" required></td>
                 <th>运输方式</th>
                 <td><input type="text" id="transportMethod" name="transportMethod" required></td>
             </tr>
             <tr>
                 <th>运单号</th>
-                <td colspan="3"><input type="text" id="orderNo" name="orderNo" value=""></td>
+                <td colspan="3"><input type="text" id="orderNo" name="orderNo" value="" required></td>
                 <th>货号</th>
                 <td colspan="3"><input type="text" id="productCode" name="productCode" value=""></td>
             </tr>
@@ -37,13 +37,13 @@
             </tr>
             <tr>
                 <th>手机号</th>
-                <td colspan="3"><input type="text" id="senderPhone" name="senderPhone" required value=""></td>
+                <td colspan="3"><input type="text" id="senderPhone" name="senderPhone" value=""></td>
                 <th>手机号</th>
                 <td colspan="3"><input type="text" id="receiverPhone" name="receiverPhone" required value=""></td>
             </tr>
             <tr>
                 <th>详细地址</th>
-                <td colspan="3"><input type="text" id="senderAddress" name="senderAddress" required value=""></td>
+                <td colspan="3"><input type="text" id="senderAddress" name="senderAddress" value=""></td>
                 <th>详细地址</th>
                 <td colspan="3"><input type="text" id="receiverAddress" name="receiverAddress" required value="">
                 </td>
@@ -74,11 +74,11 @@
                 <td><input type="number" step="1" name="items[0][quantity]" value="1"></td>
                 <td><input type="number" step="0.1" name="items[0][weight]" value="0.0"></td>
                 <td><input type="number" step="0.1" name="items[0][volume]" value="0.0"></td>
-                <td><input type="number" step="0.01" name="items[0][deliveryCharge]" value="0.00"></td>
-                <td><input type="number" step="0.01" name="items[0][insuranceFee]" value="0.00"></td>
-                <td><input type="number" step="0.01" name="items[0][packagingFee]" value="0.00"></td>
-                <td><input type="number" step="0.01" name="items[0][goodsValue]" value="0.00"></td>
-                <td><input type="number" step="0.01" name="items[0][freight]" value="0.00"></td>
+                <td><input type="number" step="1" name="items[0][deliveryCharge]" value="0"></td>
+                <td><input type="number" step="1" name="items[0][insuranceFee]" value="0"></td>
+                <td><input type="number" step="1" name="items[0][packagingFee]" value="0"></td>
+                <td><input type="number" step="1" name="items[0][goodsValue]" value="0"></td>
+                <td><input type="number" step="1" name="items[0][freight]" value="0"></td>
                 <td><input type="text" name="items[0][remarks]"></td>
             </tr>
             </tbody>

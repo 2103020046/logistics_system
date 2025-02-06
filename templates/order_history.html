@@ -13,6 +13,7 @@
     <table class="table table-hover">
         <thead class="table-light">
         <tr>
+            <th>日期</th>
             <th>运单号</th>
             <th>发货方</th>
             <th>收货方</th>
@@ -22,6 +23,7 @@
         <tbody>
         {% for order in orders %}
             <tr>
+                <td>{{ order.date }}</td>
                 <td>{{ order.order_number }}</td>
                 <td>{{ order.sender }}</td>
                 <td>{{ order.receiver }}</td>
