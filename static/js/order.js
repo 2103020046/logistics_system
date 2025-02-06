@@ -12,6 +12,11 @@ function validateForm() {
     return isValid;
 }
 
+// 监听返回按钮
+document.getElementById('backButton').addEventListener('click', function() {
+    window.history.back();
+});
+
 document.getElementById('orderForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -65,6 +70,13 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
         });
 });
 
+function updateCancelBtnVisibility() {
+    // 获取货物信息行的数量
+    const rowCount = document.querySelectorAll('#goodsTbody tr').length;
+    // 根据行数决定是否显示或隐藏取消按钮
+    document.getElementById('cancel-row-btn').style.display = rowCount > 1 ? 'inline-block' : 'none';
+}
+
 function addGoodsRow() {
     // 获取当前行数，用于生成唯一的name属性
     const tbody = document.getElementById('goodsTbody');
@@ -90,7 +102,24 @@ function addGoodsRow() {
 
     // 将新行插入到表格中
     tbody.appendChild(newRow);
+
+    // 更新取消按钮的可见性
+    updateCancelBtnVisibility();
 }
+
+document.getElementById('cancel-row-btn').addEventListener('click', function () {
+    const tbody = document.getElementById('goodsTbody');
+    if (tbody.rows.length > 1) { // 只有在有多于一行的时候才允许删除最后一行
+        tbody.deleteRow(tbody.rows.length - 1);
+    }
+    // 更新取消按钮的可见性
+    updateCancelBtnVisibility();
+});
+
+// 页面加载时初始化取消按钮的可见性
+window.onload = function () {
+    updateCancelBtnVisibility();
+};
 
 
 function previewOrder() {

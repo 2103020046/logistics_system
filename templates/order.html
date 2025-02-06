@@ -9,6 +9,7 @@
 
 <body>
 <div class="container">
+    <button type="button" id="backButton" class="back-button"><i class="arrow-icon"></i></button>
     <h2 style="text-align: center;">货物托运单</h2>
     <form id="orderForm" method="post">
         <!-- 订单信息表 -->
@@ -83,7 +84,8 @@
             </tr>
             </tbody>
         </table>
-        <button type="button" onclick="addGoodsRow()">新增一行</button>
+        <button type="button" onclick="addGoodsRow()" class="add-row-btn">新增一行</button>
+        <button type="button" id="cancel-row-btn" style="display: none;">取消</button>
 
         <!-- 额外信息表 -->
         <table class="additionalTable">
@@ -144,7 +146,7 @@
         </table>
 
         <button type="submit" style="float:right;">提交订单</button>
-        <button type="button" onclick="previewOrder()" style="display: none">预览订单</button>
+        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>
     </form>
 </div>
 
