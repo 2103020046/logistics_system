@@ -1,7 +1,10 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户', default=1)  # 将订单与用户关联
+
     # 订单基本信息
     order_number = models.CharField(max_length=50, unique=True, verbose_name='运单号', default='123456789')
     sender = models.CharField(max_length=100, verbose_name='发货方', default='Default Carrier')

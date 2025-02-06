@@ -25,6 +25,7 @@ def create_order(request):
 
             # 解析表单数据
             order_data = {
+                'user': request.user,  # 关联当前用户
                 'order_number': request.POST.get('orderNo'),  # 运单号
                 'sender': request.POST.get('senderName', ''),  # 发货人
                 'sender_phone': request.POST.get('senderPhone', ''),  # 发货人手机号
@@ -68,43 +69,37 @@ def create_order(request):
             items = []
             i = 0
             while True:
-                try:
-                    item_key = f'items[{i}][productName]'
-                    if item_key not in request.POST:  # 检查是否存在该键
-                        break
-                    item_data = {
-                        'order_id': order.id,
-                        'item_name': request.POST[f'items[{i}][productName]'],  # 品名
-                        'package_type': request.POST[f'items[{i}][packageType]'],  # 包装
-                        'quantity': int(request.POST[f'items[{i}][quantity]']),  # 件数
-                        'weight': float(request.POST[f'items[{i}][weight]']),  # 重量
-                        'volume': float(request.POST[f'items[{i}][volume]']),  # 体积
-                        'delivery_charge': request.POST.get('deliveryCharge', 0),  # 送（提）货费
-                        'insurance_fee': request.POST.get('insuranceFee', 0),  # 保险费
-                        'packaging_fee': request.POST.get('packagingFee', 0),  # 包装费
-                        'goods_value': request.POST.get('goodsValue', 0),  # 货物价值
-                        'remarks': request.POST.get('remarks', 0),  # 备注
-                        'freight': float(request.POST[f'items[{i}][freight]'])  # 运费
-                    }
-                    items.append(Item.objects.create(**item_data))
-                    i += 1
-                except (KeyError, ValueError) as e:
-                    return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-                except IndexError:
+                item_key = f'items[{i}][productName]'
+                if item_key not in request.POST:  # 检查是否存在该键
                     break
+                item_data = {
+                    'order_id': order.id,
+                    'item_name': request.POST[f'items[{i}][productName]'],  # 品名
+                    'package_type': request.POST[f'items[{i}][packageType]'],  # 包装
+                    'quantity': int(request.POST[f'items[{i}][quantity]']),  # 件数
+                    'weight': float(request.POST[f'items[{i}][weight]']),  # 重量
+                    'volume': float(request.POST[f'items[{i}][volume]']),  # 体积
+                    'delivery_charge': float(request.POST.get(f'items[{i}][deliveryCharge]', 0)),  # 送（提）货费
+                    'insurance_fee': float(request.POST.get(f'items[{i}][insuranceFee]', 0)),  # 保险费
+                    'packaging_fee': float(request.POST.get(f'items[{i}][packagingFee]', 0)),  # 包装费
+                    'goods_value': float(request.POST.get(f'items[{i}][goodsValue]', 0)),  # 货物价值
+                    'remarks': request.POST.get(f'items[{i}][remarks]', ''),  # 备注
+                    'freight': float(request.POST[f'items[{i}][freight]'])  # 运费
+                }
+                items.append(Item.objects.create(**item_data))
+                i += 1
 
-                # 返回包含 orderId 的 JSON 响应
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Order created successfully',
-                    'orderId': order.id  # 添加 orderId 到响应中
-                })
+            # 返回包含 orderId 的 JSON 响应
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Order created successfully',
+                'orderId': order.id  # 添加 orderId 到响应中
+            })
 
-            return JsonResponse({'status': 'success'})
         except Exception as e:
             logger.error(f"Unexpected error creating order: {str(e)}", exc_info=True)
             return JsonResponse(
-                {'status': 'error', 'message': f' {str(e)},An unexpected error occurred. Please try again later.'},
+                {'status': 'error', 'message': f'{str(e)}, An unexpected error occurred. Please try again later.'},
                 status=500)
 
 
@@ -130,8 +125,8 @@ def orders(request):
 @custom_login_required
 @login_required
 def order_history(request):
-    # 获取所有订单数据
-    orders = Order.objects.all()
+    # 获取当前登录用户的订单数据
+    orders = Order.objects.filter(user=request.user)
 
     # 分页设置
     paginator = Paginator(orders, 10)  # 每页显示10条数据
@@ -150,9 +145,11 @@ def order_history(request):
 
 
 @csrf_exempt
+@login_required
 def get_order_detail(request, order_id):
     try:
-        order = Order.objects.get(id=order_id)
+        # 获取当前用户的订单
+        order = Order.objects.get(id=order_id, user=request.user)
         items = order.items.all()  # 获取所有关联的商品信息
         items_data = [{
             'item_name': item.item_name,
@@ -197,7 +194,7 @@ def get_order_detail(request, order_id):
             'receiver_sign': order.receiver_sign,
             'id_card': order.id_card,
             'order_maker': order.order_maker,
-            'items': items_data,  # 返回商品信息
+            'items': items_data,
         })
     except Order.DoesNotExist:
         return JsonResponse({'error': 'Order not found'}, status=404)

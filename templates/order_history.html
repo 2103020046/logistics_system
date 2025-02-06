@@ -5,7 +5,6 @@
     <title>历史订单</title>
     <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/orderHistory.css" rel="stylesheet">
-
 </head>
 <body>
 <div class="container mt-4">
@@ -21,46 +20,49 @@
         </tr>
         </thead>
         <tbody>
-        {% for order in orders %}
-            <tr>
-                <td>{{ order.date }}</td>
-                <td>{{ order.order_number }}</td>
-                <td>{{ order.sender }}</td>
-                <td>{{ order.receiver }}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="openOrderModal({{ order.id }})">查看</button>
-                    <a href="{% url 'edit_order' order.id %}" class="btn btn-sm btn-warning">编辑</a>
-                    <button class="btn btn-sm btn-danger" onclick="deleteOrder({{ order.id }})">删除</button>
-                </td>
-            </tr>
-        {% endfor %}
+        {% if orders %}
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.order_number }}</td>
+                    <td>{{ order.sender }}</td>
+                    <td>{{ order.receiver }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="openOrderModal({{ order.id }})">查看</button>
+                        <a href="{% url 'edit_order' order.id %}" class="btn btn-sm btn-warning">编辑</a>
+                        <button class="btn btn-sm btn-danger" onclick="deleteOrder({{ order.id }})">删除</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
         </tbody>
     </table>
+
     <!-- 分页导航 -->
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            {% if orders.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ orders.previous_page_number }}" tabindex="-1">上一页</a>
-                </li>
-            {% endif %}
-            {% for i in orders.paginator.page_range %}
-                <li class="page-item {% if orders.number == i %}active{% endif %}">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                </li>
-            {% endfor %}
-            {% if orders.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ orders.next_page_number }}">下一页</a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
+    {% if orders and orders.paginator.count >= 10 %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if orders.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ orders.previous_page_number }}" tabindex="-1">上一页</a>
+                    </li>
+                {% endif %}
+                {% for i in orders.paginator.page_range %}
+                    <li class="page-item {% if orders.number == i %}active{% endif %}">
+                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                {% if orders.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ orders.next_page_number }}">下一页</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 </div>
 
 <!-- 模态框 -->
-<!-- 模态框HTML -->
-<!-- 模态框HTML -->
 <div id="orderModal" class="modal">
     <div class="modal-content">
         <span class="close" id="modalClose">&times;</span>
