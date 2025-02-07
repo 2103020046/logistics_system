@@ -1,4 +1,6 @@
 # views.py
+import json
+
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Order, Item
@@ -200,14 +202,40 @@ def get_order_detail(request, order_id):
         return JsonResponse({'error': 'Order not found'}, status=404)
 
 
+@login_required
 def edit_order(request, order_id):
-    order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id)
-
+    order = get_object_or_404(Order.objects.prefetch_related('items'), id=order_id, user=request.user)
+    context = {
+        'order': order,
+    }
     if request.method == 'POST':
         # 更新订单基本信息
         order.sender = request.POST.get('senderName')
         order.receiver = request.POST.get('receiverName')
-        # 更新其他字段（按实际字段补充）
+        order.sender_phone = request.POST.get('senderPhone')
+        order.receiver_phone = request.POST.get('receiverPhone')
+        order.sender_address = request.POST.get('senderAddress')
+        order.receiver_address = request.POST.get('receiverAddress')
+        order.product_code = request.POST.get('productCode')
+        order.total_freight = request.POST.get('totalFee')
+        order.payment_method = request.POST.get('paymentMethod')
+        order.return_requirement = request.POST.get('returnRequirement')
+        order.other_expenses = request.POST.get('otherExpenses')
+        order.expense_details = request.POST.get('feeDescription')
+        order.carrier = request.POST.get('carrier')
+        order.carrier_branch = request.POST.get('carrierBranch')
+        order.departure_station_phone = request.POST.get('departureStationPhone')
+        order.arrival_station = request.POST.get('arrivalStation')
+        order.arrival_station_phone = request.POST.get('arrivalStationPhone')
+        order.transit_fee = request.POST.get('transitFee')
+        order.date = request.POST.get('date')
+        order.departure_station = request.POST.get('departureStation')
+        order.transport_method = request.POST.get('transportMethod')
+        order.delivery_method = request.POST.get('deliveryMethod')
+        order.sender_sign = request.POST.get('senderSign')
+        order.receiver_sign = request.POST.get('receiverSign')
+        order.id_card = request.POST.get('idCard')
+        order.order_maker = request.POST.get('orderMaker')
         order.save()
 
         # 更新商品项
@@ -224,6 +252,11 @@ def edit_order(request, order_id):
                 quantity=request.POST.get(f'items[{index}][quantity]'),
                 weight=request.POST.get(f'items[{index}][weight]'),
                 volume=request.POST.get(f'items[{index}][volume]'),
+                delivery_charge=request.POST.get(f'items[{index}][deliveryCharge]'),
+                insurance_fee=request.POST.get(f'items[{index}][insuranceFee]'),
+                packaging_fee=request.POST.get(f'items[{index}][packagingFee]'),
+                goods_value=request.POST.get(f'items[{index}][goodsValue]'),
+                remarks=request.POST.get(f'items[{index}][remarks]'),
                 freight=request.POST.get(f'items[{index}][freight]'),
             )
             index += 1
@@ -270,3 +303,41 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+
+@csrf_exempt
+def update_order(request, order_id):
+    if request.method == 'PUT':
+        try:
+            # 获取订单对象
+            order = Order.objects.get(id=order_id)
+
+            # 解析请求体中的JSON数据
+            data = json.loads(request.body.decode('utf-8'))
+
+            # 更新订单信息
+            for item in data.get('items', []):
+                # 假设你有一个模型 Item 来保存每个货物的信息
+                item_obj, created = Item.objects.update_or_create(
+                    order=order,
+                    index=item['index'],
+                    defaults={
+                        'product_name': item['productName'],
+                        'package_type': item['packageType'],
+                        'quantity': item['quantity'],
+                        'weight': item['weight'],
+                        'volume': item['volume'],
+                        'delivery_charge': item['deliveryCharge'],
+                        'insurance_fee': item['insuranceFee'],
+                        'packaging_fee': item['packagingFee'],
+                        'goods_value': item['goodsValue'],
+                        'freight': item['freight'],
+                        'remarks': item['remarks']
+                    }
+                )
+
+            return JsonResponse({'status': 'success', 'message': '订单更新成功'}, status=200)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': '只接受PUT请求'}, status=405)

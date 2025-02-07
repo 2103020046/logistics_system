@@ -9,40 +9,59 @@
 
 <body>
 <div class="container">
+    <button type="button" id="backButton" class="back-button"><i class="arrow-icon"></i></button>
     <h2 style="text-align: center;">编辑货物托运凭证</h2>
     <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
         {% csrf_token %}
         <!-- 订单信息表 -->
         <table class="orderTable">
             <tr>
+                <th>日期</th>
+                <td><input type="text" id="date" name="date" required placeholder="请参考日期格式：2025-01-01"
+                           value="{{ order.date }}"></td>
+                <th>发站</th>
+                <td><input type="text" id="departureStation" name="departureStation" required
+                           value="{{ order.departure_station }}"></td>
+                <th>到站</th>
+                <td><input type="text" id="arrivalStation" name="arrivalStation" required
+                           value="{{ order.arrival_station }}"></td>
+                <th>运输方式</th>
+                <td><input type="text" id="transportMethod" name="transportMethod" required
+                           value="{{ order.transport_method }}"></td>
+            </tr>
+            <tr>
                 <th>运单号</th>
-                <td><input type="text" id="orderNo" name="orderNo" required value="{{ order.order_no }}"></td>
+                <td colspan="3"><input type="text" id="orderNo" name="orderNo" required
+                                       value="{{ order.order_number }}">
+                </td>
                 <th>货号</th>
-                <td><input type="text" id="productCode" name="productCode" value="{{ order.product_code }}"></td>
+                <td colspan="3"><input type="text" id="productCode" name="productCode" value="{{ order.product_code }}">
+                </td>
             </tr>
             <tr>
                 <th>发货方</th>
-                <td><input type="text" id="senderName" name="senderName" required value="{{ order.sender }}"></td>
+                <td colspan="3"><input type="text" id="senderName" name="senderName" required
+                                       value="{{ order.sender }}"></td>
                 <th>收货方</th>
-                <td><input type="text" id="receiverName" name="receiverName" required value="{{ order.receiver }}"></td>
+                <td colspan="3"><input type="text" id="receiverName" name="receiverName" required
+                                       value="{{ order.receiver }}"></td>
             </tr>
             <tr>
                 <th>手机号</th>
-                <td><input type="text" id="senderPhone" name="senderPhone" required value="{{ order.sender_phone }}">
-                </td>
+                <td colspan="3"><input type="text" id="senderPhone" name="senderPhone" required
+                                       value="{{ order.sender_phone }}"></td>
                 <th>手机号</th>
-                <td><input type="text" id="receiverPhone" name="receiverPhone" required
-                           value="{{ order.receiver_phone }}"></td>
+                <td colspan="3"><input type="text" id="receiverPhone" name="receiverPhone" required
+                                       value="{{ order.receiver_phone }}"></td>
             </tr>
             <tr>
                 <th>详细地址</th>
-                <td><input type="text" id="senderAddress" name="senderAddress" required
-                           value="{{ order.sender_address }}"></td>
+                <td colspan="3"><input type="text" id="senderAddress" name="senderAddress" required
+                                       value="{{ order.sender_address }}"></td>
                 <th>详细地址</th>
-                <td><input type="text" id="receiverAddress" name="receiverAddress" required
-                           value="{{ order.receiver_address }}"></td>
+                <td colspan="3"><input type="text" id="receiverAddress" name="receiverAddress" required
+                                       value="{{ order.receiver_address }}"></td>
             </tr>
-            <!-- 更多表单项可以按照类似的方式添加 -->
         </table>
 
         <!-- 货物信息表 -->
@@ -54,37 +73,76 @@
                 <th>件数</th>
                 <th>重量(kg)</th>
                 <th>体积(m³)</th>
+                <th>送（提）货费</th>
+                <th>保险费</th>
+                <th>包装费</th>
+                <th>货物价值</th>
                 <th>运费(元)</th>
+                <th>备注</th>
             </tr>
             </thead>
             <tbody id="goodsTbody">
             {% for item in order.items.all %}
                 <tr>
-                    <td><input type="text" name="items[0][productName]" required></td>
-                    <td><input type="text" name="items[0][packageType]" required></td>
+                    <td><input type="text" name="items[{{ forloop.counter0 }}][productName]" required
+                               value="{{ item.item_name }}"></td>
+                    <td><input type="text" name="items[{{ forloop.counter0 }}][packageType]" required
+                               value="{{ item.package_type }}"></td>
                     <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][quantity]" required
                                value="{{ item.quantity }}"></td>
                     <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][weight]" required
                                value="{{ item.weight }}"></td>
                     <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][volume]" required
                                value="{{ item.volume }}"></td>
-                    <td><input type="number" step="0.01" name="items[{{ forloop.counter0 }}][freight]" required
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][deliveryCharge]" required
+                               value="{{ item.delivery_charge }}"></td>
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][insuranceFee]" required
+                               value="{{ item.insurance_fee }}"></td>
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][packagingFee]" required
+                               value="{{ item.packaging_fee }}"></td>
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][goodsValue]" required
+                               value="{{ item.goods_value }}"></td>
+                    <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][freight]" required
                                value="{{ item.freight }}"></td>
+                    <td><input type="text" name="items[{{ forloop.counter0 }}][remarks]" value="{{ item.remarks }}">
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-        <button type="button" onclick="addGoodsRow()">新增一行</button>
+        <button type="button" onclick="addGoodsRow()" class="add-row-btn">新增一行</button>
+        <button type="button" id="cancel-row-btn" style="display: none;">取消</button>
 
         <!-- 额外信息表 -->
         <div class="additionalInfo">
             <table class="additionalTable">
                 <tr>
                     <th>总运费</th>
-                    <td><input type="number" id="totalFee" name="totalFee" required value="{{ order.total_fee }}"></td>
+                    <td><input type="number" id="totalFee" name="totalFee" required value="{{ order.total_freight }}">
+                    </td>
                     <th>付款方式</th>
-                    <td><input type="text" id="paymentMethod" name="paymentMethod" required
-                               value="{{ order.payment_method }}"></td>
+                    <td>
+                        <select id="paymentMethod" name="paymentMethod" required>
+                            <option value="提付" {% if order.payment_method == '提付' %}selected{% endif %}>提付
+                            </option>
+                            <option value="到付" {% if order.payment_method == '到付' %}selected{% endif %}>到付
+                            </option>
+                            <option value="月结" {% if order.payment_method == '月结' %}selected{% endif %}>月结
+                            </option>
+                        </select>
+                    </td>
+                    <th>交货方式</th>
+                    <td>
+                        <select id="deliveryMethod" name="deliveryMethod" required>
+                            <option value="送货" {% if order.delivery_method == '送货' %}selected{% endif %}>送货
+                            </option>
+                            <option value="自提" {% if order.delivery_method == '自提' %}selected{% endif %}>自提
+                            </option>
+                        </select>
+                    </td>
+                    <th>客户单号</th>
+                    <td><input type="number" id="customerOrderNo" name="customerOrderNo" required
+                               value="{{ order.customer_order_no }}"></td>
                 </tr>
                 <tr>
                     <th>回单要求</th>
@@ -95,28 +153,35 @@
                     </td>
                     <th>费用说明</th>
                     <td><input type="text" id="feeDescription" name="feeDescription"
-                               value="{{ order.fee_description }}"></td>
-                </tr>
-                <tr>
+                               value="{{ order.expense_details }}"></td>
                     <th>承运商</th>
                     <td><input type="text" id="carrier" name="carrier" required value="{{ order.carrier }}"></td>
-                    <th>承运网点</th>
-                    <td><input type="text" id="carrierBranch" name="carrierBranch" required
-                               value="{{ order.carrier_branch }}"></td>
-                    <th>发站电话</th>
-                    <td><input type="text" id="departureStationPhone" name="departureStationPhone"
-                               value="{{ order.departure_station_phone }}"></td>
                 </tr>
                 <tr>
-                    <th>中转费</th>
-                    <td><input type="number" id="transitFee" name="transitFee" required value="{{ order.transit_fee }}">
-                    </td>
-                    <th>到站</th>
-                    <td><input type="text" id="arrivalStation" name="arrivalStation"
-                               value="{{ order.arrival_station }}"></td>
-                    <th>到站电话</th>
-                    <td><input type="text" id="arrivalStationPhone" name="arrivalStationPhone"
-                               value="{{ order.arrival_station_phone }}"></td>
+                    <th>发货人签名</th>
+                    <td><input type="text" id="senderSign" name="senderSign" value="{{ order.sender_sign }}"></td>
+                    <th>收货人签名</th>
+                    <td><input type="text" id="receiverSign" name="receiverSign" value="{{ order.receiver_sign }}"></td>
+                    <th>身份证号</th>
+                    <td><input type="number" id="idCard" name="idCard" value="{{ order.id_card }}"></td>
+                    <th>制单人</th>
+                    <td><input type="text" id="orderMaker" name="orderMaker" value="{{ order.order_maker }}"></td>
+                </tr>
+                <tr>
+                    <th>发站查询电话</th>
+                    <td colspan="3"><input type="text" id="departureStationPhone" name="departureStationPhone"
+                                           value="{{ order.departure_station_phone }}"></td>
+                    <th>发站地址</th>
+                    <td colspan="3"><input type="text" id="carrierAddress" name="carrierAddress" required
+                                           value="{{ order.carrier_address }}"></td>
+                </tr>
+                <tr>
+                    <th>到站查询电话</th>
+                    <td colspan="3"><input type="text" id="arrivalStationPhone" name="arrivalStationPhone"
+                                           value="{{ order.arrival_station_phone }}"></td>
+                    <th>到站地址</th>
+                    <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress"
+                                           value="{{ order.arrival_address }}"></td>
                 </tr>
             </table>
         </div>
@@ -126,22 +191,66 @@
     <a href="{% url 'order_history' %}" class="btn btn-secondary">返回历史订单</a>
 </div>
 
-<script src="/static/js/order.js"></script>
+<script src="/static/js/edit_order.js"></script>
 <script>
-    function updateOrder(orderId, updatedData) {
+    // 在页面加载时初始化 orderId
+    const orderId = document.getElementById('order-id').value;
+
+    document.getElementById('orderForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // 验证表单
+        if (!validateForm()) return;
+
+        // 准备表单数据
+        const formData = new FormData(event.target);
+
+        // 提取商品信息
+        const rows = document.querySelectorAll('#goodsTbody tr');
+        rows.forEach((row, index) => {
+            const cells = row.querySelectorAll('td');
+            const productName = cells[0].querySelector('input').value;
+            const packageType = cells[1].querySelector('input').value;
+            const quantity = parseFloat(cells[2].querySelector('input').value) || 0;
+            const weight = parseFloat(cells[3].querySelector('input').value) || 0;
+            const volume = parseFloat(cells[4].querySelector('input').value) || 0;
+            const deliveryCharge = parseFloat(cells[5].querySelector('input').value) || 0;
+            const insuranceFee = parseFloat(cells[6].querySelector('input').value) || 0;
+            const packagingFee = parseFloat(cells[7].querySelector('input').value) || 0;
+            const goodsValue = parseFloat(cells[8].querySelector('input').value) || 0;
+            const freight = parseFloat(cells[9].querySelector('input').value) || 0;
+            const remarks = cells[10].querySelector('input').value;
+
+            formData.set(`items[${index}][productName]`, productName);
+            formData.set(`items[${index}][packageType]`, packageType);
+            formData.set(`items[${index}][quantity]`, quantity);
+            formData.set(`items[${index}][weight]`, weight);
+            formData.set(`items[${index}][volume]`, volume);
+            formData.set(`items[${index}][deliveryCharge]`, deliveryCharge);
+            formData.set(`items[${index}][insuranceFee]`, insuranceFee);
+            formData.set(`items[${index}][packagingFee]`, packagingFee);
+            formData.set(`items[${index}][goodsValue]`, goodsValue);
+            formData.set(`items[${index}][freight]`, freight);
+            formData.set(`items[${index}][remarks]`, remarks);
+        });
+
+        // 发送数据到后端
         fetch(`/api/orders/${orderId}/`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value, // Django CSRF token
             },
-            body: JSON.stringify(updatedData)
+            body: formData
         })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
                     alert('订单已成功更新');
-                    // 可选：刷新页面或导航到订单历史页
-                    window.location.href = '/orders/';
+                    const userConfirm = confirm('是否现在查看订单预览？');
+                    if (userConfirm) {
+                        previewOrder();
+                    }
+                    window.location.href = '/orders/history/'; // 可选：刷新页面或导航到订单历史页
                 } else {
                     alert(`更新订单失败：${data.message}`);
                 }
@@ -150,7 +259,7 @@
                 console.error(error);
                 alert('更新订单失败，请重试');
             });
-    }
+    });
 </script>
 </body>
 
