@@ -13,7 +13,7 @@ function validateForm() {
 }
 
 // 监听返回按钮
-document.getElementById('backButton').addEventListener('click', function() {
+document.getElementById('backButton').addEventListener('click', function () {
     window.history.back();
 });
 
@@ -127,26 +127,209 @@ function previewOrder() {
     const previewWindow = window.open('', '_blank');
 
     // 获取所有表格的数据
-    const orderDetails = document.querySelector('.orderTable').outerHTML;
-    const goodsDetails = document.querySelector('.goodsTable').outerHTML;
-    const additionalDetails = document.querySelector('.additionalTable').outerHTML;
+    const date = document.querySelector('input[name="date"]').value;
+    const departureStation = document.querySelector('input[name="departureStation"]').value;
+    const arrivalStation = document.querySelector('input[name="arrivalStation"]').value;
+    const orderNo = document.querySelector('input[name="orderNo"]').value;
+    const senderName = document.querySelector('input[name="senderName"]').value;
+    const receiverName = document.querySelector('input[name="receiverName"]').value;
+    const senderPhone = document.querySelector('input[name="senderPhone"]').value;
+    const receiverPhone = document.querySelector('input[name="receiverPhone"]').value;
+    const senderAddress = document.querySelector('input[name="senderAddress"]').value;
+    const receiverAddress = document.querySelector('input[name="receiverAddress"]').value;
 
+    const productName = document.querySelector('input[name="items[0][productName]"]').value;
+    const packageType = document.querySelector('input[name="items[0][packageType]"]').value;
+    const quantity = document.querySelector('input[name="items[0][quantity]"]').value;
+    const weight = document.querySelector('input[name="items[0][weight]"]').value;
+    const volume = document.querySelector('input[name="items[0][volume]"]').value;
+    const deliveryCharge = document.querySelector('input[name="items[0][deliveryCharge]"]').value;
+    const insuranceFee = document.querySelector('input[name="items[0][insuranceFee]"]').value;
+    const packagingFee = document.querySelector('input[name="items[0][packagingFee]"]').value;
+    const goodsValue = document.querySelector('input[name="items[0][goodsValue]"]').value;
+    const freight = document.querySelector('input[name="items[0][freight]"]').value;
+    const remarks = document.querySelector('input[name="items[0][remarks]"]').value;
+
+    const productName1 = document.querySelector('input[name="items[1][productName]"]').value;
+    const packageType1 = document.querySelector('input[name="items[1][packageType]"]').value;
+    const quantity1 = document.querySelector('input[name="items[1][quantity]"]').value;
+    const weight1 = document.querySelector('input[name="items[1][weight]"]').value;
+    const volume1 = document.querySelector('input[name="items[1][volume]"]').value;
+    const deliveryCharge1 = document.querySelector('input[name="items[1][deliveryCharge]"]').value;
+    const insuranceFee1 = document.querySelector('input[name="items[1][insuranceFee]"]').value;
+    const packagingFee1 = document.querySelector('input[name="items[1][packagingFee]"]').value;
+    const goodsValue1 = document.querySelector('input[name="items[1][goodsValue]"]').value;
+    const freight1 = document.querySelector('input[name="items[1][freight]"]').value;
+    const remarks1 = document.querySelector('input[name="items[1][remarks]"]').value;
+
+    const totalFee = document.querySelector('input[name="totalFee"]').value;
+    // const paymentMethod = document.querySelector('input[name="paymentMethod"]').value;
+    // const deliveryMethod = document.querySelector('input[name="deliveryMethod()"]').value;
+    const returnRequirement = document.querySelector('input[name="returnRequirement"]').value;
+    const customerOrderNo  = document.querySelector('input[name="customerOrderNo"]').value;
+    const senderSign  = document.querySelector('input[name="senderSign"]').value;
+    const receiverSign  = document.querySelector('input[name="receiverSign"]').value;
+    const idCard  = document.querySelector('input[name="idCard"]').value;
+    const orderMaker  = document.querySelector('input[name="orderMaker"]').value;
+    const departureStationPhone = document.querySelector('input[name="departureStationPhone"]').value;
+    const carrierAddress = document.querySelector('input[name="carrierAddress"]').value;
+    const arrivalStationPhone = document.querySelector('input[name="arrivalStationPhone"]').value;
+    const arrivalAddress = document.querySelector('input[name="arrivalAddress"]').value;
     // 构建要显示的内容
     let content = `
-        <html>
-            <head>
-                <title>订单预览 - 双木林物流系统</title>
-                <!-- 确保样式一致 -->
-                <link rel="stylesheet" href="/static/css/order.css">
-            </head>
-            <body>
-                <h2 style="text-align: center;">货物托运单 - 预览</h2>
-                ${orderDetails}
-                ${goodsDetails}
-                ${additionalDetails}
-                <button onclick="window.print();">打印</button>
-            </body>
-        </html>
+        <!DOCTYPE html>
+<html lang="zh - CN">
+
+<head>
+  <meta charset="UTF - 8">
+  <title>物流公司托运单</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 80%;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1 style="text-align: justify; color: red;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;______________物流公司托运单</h1>
+    <table>
+      <tr>
+        <th>日期</th>
+        <td colspan="2">${date}</td>
+        <th>发站</th>
+        <td colspan="2">${departureStation}</td>
+        <th colspan="2">到站</th>
+        <td>${arrivalStation}</td>
+        <th colspan="2">查询单号</th>
+        <td>${orderNo}</td>
+      </tr>
+      <tr>
+        <th rowspan="3">发货方</th>
+        <th>发货人</th>
+        <td colspan="4">${senderName}</td>
+        <th rowspan="3">收货人</th>
+        <th>收货人</th>
+        <td colspan="4">${receiverName}</td>
+      </tr>
+      <tr>
+        <th>电话</th>
+        <td colspan="4">${senderPhone}</td>
+        <th>电话</th>
+        <td colspan="4">${receiverPhone}</td>
+      </tr>
+      <tr>
+        <th>地址</th>
+        <td colspan="4">${senderAddress}</td>
+        <th>地址</th>
+        <td colspan="4">${receiverAddress}</td>
+      </tr>
+      <tr>
+        <th style="width: 20px;" colspan="2">品名</th>
+        <th>包装</th>
+        <th>件数</th>
+        <th>重量</th>
+        <th>体积</th>
+        <th>送货费</th>
+        <th>保险费</th>
+        <th>包装费</th>
+        <th>货物价值</th>
+        <th>运费</th>
+        <th>备注</th>
+      </tr>
+      <tr>
+        <td style="width: 20px;" colspan="2">${productName}</td>
+        <td>${packageType}</td>
+        <td>${quantity}</td>
+        <td>${weight}</td>
+        <td>${volume}</td>
+        <td>${deliveryCharge}</td>
+        <td>${insuranceFee}</td>
+        <td>${packagingFee}</td>
+        <td>${goodsValue}</td>
+        <td>${freight}</td>
+        <td>${remarks}</td>
+      </tr>
+      <tr>
+        <td style="width: 20px;" colspan="2">${productName1}</td>
+        <td>${packageType1}</td>
+        <td>${quantity1}</td>
+        <td>${weight1}</td>
+        <td>${volume1}</td>
+        <td>${deliveryCharge1}</td>
+        <td>${insuranceFee1}</td>
+        <td>${packagingFee1}</td>
+        <td>${goodsValue1}</td>
+        <td>${freight1}</td>
+        <td>${remarks1}</td>
+      </tr>
+      <tr>
+        <th rowspan="2">合计金额</th>
+        <td rowspan="2" colspan="6">
+          &emsp;&emsp;&emsp;万&emsp;&emsp;&emsp;仟&emsp;&emsp;&emsp;佰&emsp;&emsp;&emsp;拾&emsp;&emsp;&emsp;元&emsp;&emsp;&emsp;￥:${totalFee}
+        </td>
+        <th>交货方式</th>
+        <td colspan="2">等通知放货</td>
+        <th>付款方式</th>
+        <td>回单要求</td>
+      </tr>
+      <tr>
+        <th>送货□自提□</th>
+        <td colspan="2"></td>
+        <th>提付□现付□</th>
+        <th>${returnRequirement}</th>
+      </tr>
+      <tr>
+        <th>代收货款</th>
+        <td colspan="6">
+          &emsp;&emsp;&emsp;万&emsp;&emsp;&emsp;仟&emsp;&emsp;&emsp;佰&emsp;&emsp;&emsp;拾&emsp;&emsp;&emsp;元&emsp;&emsp;&emsp;￥:
+        </td>
+        <th>客户单号</th>
+        <td colspan="4">${customerOrderNo}</td>
+      </tr>
+      <tr>
+        <th>发货人签名</th>
+        <td colspan="2">${senderSign}</td>
+        <th>收货人签名</th>
+        <td colspan="2">${receiverSign}</td>
+        <th>身份证号</th>
+        <td colspan="3">${idCard}</td>
+        <th>制单人</th>
+        <td colspan="2">${orderMaker}</td>
+      </tr>
+    </table>
+    <h2 style="color: red;">温馨提示：托运人交付货物的行为，视为其已充分阅读理解本《托运单》背面条款且同意遵守。</h2>
+    <table style="border: none;">
+      <tr>
+        <td style="text-align: left; border: none;">发站查询电话</td>
+        <td style="text-align: left; border: none;" colspan="4">${departureStationPhone}</td>
+        <td style="text-align: left; border: none;">发站地址</td>
+        <td style="text-align: left; border: none;" colspan="4">${carrierAddress}</td>
+      </tr>
+      <tr>
+        <td style="text-align: left; border: none;">到站查询电话</td>
+        <td style="text-align: left; border: none;" colspan="4">${arrivalStationPhone}</td>
+        <td style="text-align: left; border: none;">到站地址</td>
+        <td style="text-align: left; border: none;" colspan="4">${arrivalAddress}</td>
+      </tr>
+    </table>
+  </div>
+</body>
+
+</html>
     `;
 
     // 在新窗口中显示内容

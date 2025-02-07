@@ -69,34 +69,3 @@ window.onload = function () {
     updateCancelBtnVisibility();
 };
 
-function previewOrder() {
-    // 创建一个新的窗口
-    const previewWindow = window.open('', '_blank');
-
-    // 获取所有表格的数据
-    const orderDetails = document.querySelector('.orderTable').outerHTML;
-    const goodsDetails = document.querySelector('.goodsTable').outerHTML;
-    const additionalDetails = document.querySelector('.additionalTable').outerHTML;
-
-    // 构建要显示的内容
-    let content = `
-        <html>
-            <head>
-                <title>订单预览 - 双木林物流系统</title>
-                <!-- 确保样式一致 -->
-                <link rel="stylesheet" href="/static/css/order.css">
-            </head>
-            <body>
-                <h2 style="text-align: center;">货物托运单 - 预览</h2>
-                ${orderDetails}
-                ${goodsDetails}
-                ${additionalDetails}
-                <button onclick="window.print();">打印</button>
-            </body>
-        </html>
-    `;
-
-    // 在新窗口中显示内容
-    previewWindow.document.write(content);
-    previewWindow.document.close();
-}
