@@ -141,11 +141,17 @@
                 <th>到站地址</th>
                 <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress"></td>
             </tr>
-
         </table>
-
+        <!-- 模板选择区域 -->
+        <div>
+            <label for="templateSelector">选择模板：</label>
+            <select id="templateSelector">
+                <option value="">请选择模板</option>
+            </select>
+        </div>
+        <button type="button" id="previewButton" style="float:right; margin-right: 10px;">预览</button>
         <button type="submit" style="float:right;">提交订单</button>
-        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>
+        {#        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>#}
     </form>
 </div>
 

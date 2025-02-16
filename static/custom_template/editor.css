@@ -1,0 +1,166 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.editor-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题样式 */
+.editor-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.editor-header h1 {
+    font-size: 2rem;
+    color: #34495e;
+}
+
+/* 表单样式 */
+.editor-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.editor-form label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.editor-form input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+
+.editor-form input[type="text"]:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* 编辑区域布局 */
+.editor-content {
+    display: flex;
+    flex-direction: column; /* 修改为垂直方向排列 */
+    gap: 2rem;
+}
+
+.canvas-area {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    width: 907px; /* 设置宽度为907像素 */
+    height: 527px; /* 设置高度为527像素 */
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.field {
+    position: absolute;
+    border: 1px dashed gray;
+    padding: 5px;
+    width: 20px; /* 设置字段宽度为20px */
+    background-color: rgba(255, 255, 0, 0.5);
+    font-size: 0.9rem;
+    cursor: move;
+}
+
+.fields-area {
+    background-color: #f4f6f8;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.fields-area h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #34495e;
+}
+
+.fields-area ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 自动填充列，每列最小宽度为150px */
+    gap: 1rem; /* 列间距 */
+}
+
+.fields-area li {
+    background-color: #fff;
+    padding: 0.75rem;
+    border-radius: 4px;
+    cursor: grab;
+    transition: background-color 0.3s;
+}
+
+.fields-area li:hover {
+    background-color: #eaeaea;
+}
+
+/* 确保按钮容器水平对齐 */
+.editor-form .button-container {
+    display: flex; /* 使用 Flex 布局 */
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: flex-start; /* 水平左对齐 */
+    gap: 20px; /* 设置按钮之间的间距 */
+}
+
+.save-button, .view-templates-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    display: inline-flex; /* 使用 Flex 布局以确保按钮内容居中 */
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: center; /* 水平居中对齐 */
+    font-size: 16px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none; /* 去掉链接下划线 */
+    box-sizing: border-box; /* 确保内边距不影响布局 */
+}
+
+.save-button {
+    background-color: #007bff; /* 蓝色 */
+}
+
+.view-templates-button {
+    background-color: #28a745; /* 绿色 */
+}
+
+.save-button:hover, .view-templates-button:hover {
+    opacity: 0.9;
+}
+
+
+/*新增*/
+#canvas {
+    position: relative;
+    width: 100%;
+    height: 500px; /* 根据实际需求调整 */
+    background-size: contain; /* 背景图片自适应 */
+    background-position: left; /* 图片居中 */
+    background-repeat: no-repeat; /* 防止图片重复 */
+}

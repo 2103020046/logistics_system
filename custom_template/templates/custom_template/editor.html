@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义模板编辑器</title>
+    <link rel="stylesheet" href="/static/custom_template/editor.css">
+</head>
+<body>
+<div class="editor-container">
+    <header class="editor-header">
+        <h1>自定义模板编辑器</h1>
+    </header>
+
+    <form id="templateForm" class="editor-form" method="post">
+        {% csrf_token %}
+        <label for="templateName">模板名称:</label>
+        <input type="text" id="templateName" name="template_name" required>
+
+        <!-- 按钮容器 -->
+        <div class="button-container">
+            <!-- 保存模板按钮 -->
+            <button type="submit" class="save-button">保存模板</button>
+
+            <!-- 查看已有模板按钮 -->
+            <a href="/custom_template/list/" class="view-templates-button">查看已有模板</a>
+            <!-- 上传背景图片按钮 -->
+            <label for="uploadBackground" class="upload-background-button">上传背景图片</label>
+            <input type="file" id="uploadBackground" accept="image/*" style="display: none;">
+        </div>
+    </form>
+
+    <div class="editor-content">
+        <div id="canvas" class="canvas-area">
+            <!-- 拖拽字段将显示在这里 -->
+        </div>
+
+        <div id="fields" class="fields-area">
+            <h2>可拖拽字段</h2>
+            <ul class="field-list">
+                {% for field in fields %}
+                    <li class="draggable-field">{{ field }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="/static/custom_template/editor.js"></script>
+</body>
+</html>

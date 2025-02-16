@@ -19,9 +19,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-app_name = 'orders'
+app_name = ['orders', 'custom_template']
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('orders.urls')),
+    path('custom_template/', include('custom_template.urls')),
 ]

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义模板列表</title>
+    <style>
+        /* 保持原有样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<h1>自定义模板列表</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>模板名称</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for template in templates %}
+        <tr>
+            <td>{{ template.name }}</td>
+            <td>{{ template.created_at }}</td>
+            <td>
+                <!-- 新增“查看”按钮 -->
+                <a href="#" class="btn view-template-btn" data-template-id="{{ template.id }}">查看</a>
+                <a href="{% url 'custom_template:editor' %}?template_id={{ template.id }}" class="btn">编辑</a>
+                <a href="{% url 'custom_template:delete_template' template.id %}" class="btn btn-danger"
+                   onclick="return confirm('确定要删除此模板吗？')">删除</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="3">暂无模板，请先创建一个模板。</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p><a href="{% url 'custom_template:editor' %}" class="btn">新建模板</a></p>
+
+<!-- 引入 JavaScript 实现“查看”功能 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 为所有“查看”按钮绑定点击事件
+        const viewTemplateButtons = document.querySelectorAll('.view-template-btn');
+        viewTemplateButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // 阻止默认行为
+
+                // 获取模板 ID
+                const templateId = this.getAttribute('data-template-id');
+
+                // 调用后端 API 获取模板内容
+                fetch(`/custom_template/api/templates/${templateId}/`)
+                    .then(response => response.json())
+                    .then(template => {
+                        // 在新窗口中显示模板内容
+                        const previewWindow = window.open('', '_blank');
+                        previewWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html lang="zh-CN">
+                            <head>
+                                <meta charset="UTF-8">
+                                <title>模板预览 - ${template.name}</title>
+                                <style>
+                                    body { font-family: Arial, sans-serif; margin: 20px; }
+                                    h3 { color: #333; }
+                                    p { margin: 10px 0; }
+                                    .field { position: absolute; border: 1px solid #ccc; padding: 5px; }
+                                </style>
+                            </head>
+                            <body>
+                                <h2 style="text-align: center;">模板预览</h2>
+                                <h3>模板名称：${template.name}</h3>
+                                <p>创建时间：${template.created_at}</p>
+                                <hr>
+                                <div id="preview-container" style="position: relative;">
+                                    ${template.content}
+                                </div>
+                                <script>
+                                    // 应用字段位置信息
+                                    const fieldPositions = ${JSON.stringify(template.field_positions)};
+                                    const container = document.getElementById('preview-container');
+                                    Object.keys(fieldPositions).forEach(fieldName => {
+                                        const fieldElement = container.querySelector(\`[data-name="\${fieldName}"]\`);
+                                        if (fieldElement) {
+                                            const position = fieldPositions[fieldName];
+                                            fieldElement.style.left = \`\${position.x}px\`;
+                                            fieldElement.style.top = \`\${position.y}px\`;
+                                            fieldElement.style.width = \`\${position.width}px\`;
+                                            fieldElement.style.height = \`\${position.height}px\`;
+                                        }
+                                    });
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+                    })
+                    .catch(error => console.error('加载模板内容失败:', error));
+            });
+        });
+    });
+</script>
+</body>
+</html>

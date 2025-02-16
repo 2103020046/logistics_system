@@ -100,3 +100,14 @@ nav {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+
+/* 自定义模板按钮样式 */
+.tertiary {
+    background-color: #e74c3c; /* 红橙色背景 */
+    color: white;
+}
+
+.tertiary:hover {
+    background-color: #c0392b; /* 悬停时更深的红色 */
+}
+

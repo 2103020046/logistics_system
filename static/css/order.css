@@ -52,15 +52,17 @@
 
 .add-row-btn,
 #cancel-row-btn,
-button[type="submit"],
-.preview {
-    background-color: #4CAF50;
+    /* 提交订单按钮的样式 */
+button[type="submit"] {
+    background-color: #007BFF;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin: 10px 0;
+    margin-top: 10px; /* 确保与上方元素有足够的间距 */
+    float: right;
+    margin-right: 10px; /* 设置右侧间距 */
 }
 
 .add-row-btn:hover,
@@ -114,4 +116,39 @@ h2 {
     border-top: 8px solid transparent;
     border-bottom: 8px solid transparent;
     border-right: 10px solid #aaa; /* 灰色箭头颜色 */
+}
+
+
+/* 选择模板样式 */
+#templateSelector {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+#templateSelector:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* 预览按钮的样式 */
+#previewButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px; /* 确保与上方元素有足够的间距 */
+    float: right;
+    margin-right: 20px; /* 设置右侧间距 */
+}
+
+#previewButton:hover {
+    background-color: #45a049;
 }
