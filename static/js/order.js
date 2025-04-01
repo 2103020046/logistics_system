@@ -16,15 +16,22 @@ function validateForm() {
 document.getElementById('backButton').addEventListener('click', function () {
     window.history.back();
 });
-
 document.getElementById('orderForm').addEventListener('submit', function (event) {
     event.preventDefault();
-
+    
+    
     // 验证表单
     if (!validateForm()) return;
 
     // 准备表单数据
     const formData = new FormData(event.target);
+    // 获取公司名称
+    const companyName = document.querySelector('.title-underline').value;
+    if (!companyName) {
+        alert('请填写公司名称');
+        return;
+    }
+    formData.set('companyName', companyName);  // 确保公司名称包含在表单数据中
 
     // 提取商品信息
     const rows = document.querySelectorAll('#goodsTbody tr');
@@ -146,117 +153,142 @@ document.getElementById('previewButton').addEventListener('click', function () {
         return;
     }
 
-    // 获取表单数据并转换为嵌套对象
+    // 获取表单数据
     const formData = new FormData(document.getElementById('orderForm'));
     const data = {};
+    
+    // 将表单数据转换为对象，并转换为下划线格式
     formData.forEach((value, key) => {
         // 将驼峰命名转换为下划线命名
         const underscoreKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
-        const keys = underscoreKey.split(/[[\]]/).filter(k => k !== ""); // 分割键名
-        let current = data;
-
-        for (let i = 0; i < keys.length; i++) {
-            const isArray = !isNaN(keys[i + 1]); // 判断下一个键是否为数组索引
-            const isLast = i === keys.length - 1; // 判断是否为最后一个键
-
-            if (!isLast) {
-                current[keys[i]] = current[keys[i]] || (isArray ? [] : {});
-                current = current[keys[i]]; // 进入下一层
+        
+        // 处理数组形式的字段名 (如 items[0][productName])
+        const matches = underscoreKey.match(/^(\w+)(?:\[(\d+)\])?\[?(\w+)?\]?$/);
+        if (matches) {
+            const [, base, index, field] = matches;
+            if (index !== undefined) {
+                // 处理数组字段
+                data[base] = data[base] || [];
+                data[base][index] = data[base][index] || {};
+                if (field) {
+                    data[base][index][field] = value;
+                }
             } else {
-                current[keys[i]] = value;
+                // 处理普通字段
+                data[base] = value;
             }
+        } else {
+            // 处理其他字段
+            data[underscoreKey] = value;
         }
     });
-
-
 
     // 从后端获取模板内容
     fetch(`/custom_template/api/templates/${selectedTemplateId}/`)
         .then(response => response.json())
         .then(template => {
-            console.log('Template Content:', template.content); // 调试输出
-
             let previewHtml = template.content;
 
-            // 替换占位符（支持嵌套字段）
-            function replacePlaceholders(html, data, prefix = "") {
-                for (const key in data) {
-                    const fullKey = prefix ? `${prefix}.${key}` : key;
-                    console.log(`Processing key: ${fullKey}`);
+            // 定义字段映射关系
+            const fieldMapping = {
+                '托运公司名称': data.company_name || '',
+                '日期': data.date || '',
+                '发站': data.departure_station || '',
+                '到站': data.arrival_station || '',
+                '查询单号': data.order_no || '',
+                '发货人': data.sender_name || '',
+                '收货人': data.receiver_name || '',
+                '发货人电话': data.sender_phone || '',
+                '收货人电话': data.receiver_phone || '',
+                '发货人地址': data.sender_address || '',
+                '收货人地址': data.receiver_address || '',
+                '品名': data.items?.[0]?.product_name || '',
+                '包装': data.items?.[0]?.package_type || '',
+                '件数': data.items?.[0]?.quantity || '',
+                '重量': data.items?.[0]?.weight || '',
+                '体积': data.items?.[0]?.volume || '',
+                '送货费': data.items?.[0]?.delivery_charge || '',
+                '保险费': data.items?.[0]?.insurance_fee || '',
+                '包装费': data.items?.[0]?.packaging_fee || '',
+                '货物价值': data.items?.[0]?.goods_value || '',
+                '运费': data.items?.[0]?.freight || '',
+                '备注': data.items?.[0]?.remarks || '',
+                '合计费用': data.total_fee || '',
+                '回单要求': data.return_requirement || '',
+                '客户单号': data.customer_order_no || '',
+                '发货人签名': data.sender_sign || '',
+                '收货人签名': data.receiver_sign || '',
+                '身份证号': data.id_card || '',
+                '制单人': data.order_maker || '',
+                '发站电话': data.departure_station_phone || '',
+                '发站地址': data.carrier_address || '',
+                '到站电话': data.arrival_station_phone || '',
+                '到站地址': data.arrival_address || ''
+            };
 
-                    // 将字段名转换为下划线命名法
-                    const snakeCaseKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
-                    const escapedKey = fullKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const snakeCaseEscapedKey = `${prefix ? `${prefix}.` : ''}${snakeCaseKey}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // 替换占位符
+            Object.entries(fieldMapping).forEach(([cnField, value]) => {
+                const placeholder = `{{ ${cnField} }}`;
+                // 替换所有匹配的占位符
+                previewHtml = previewHtml.replace(new RegExp(placeholder, 'g'), value);
+            });
 
-                    if (typeof data[key] === "object" && data[key] !== null) {
-                        if (Array.isArray(data[key])) {
-                            html = html.replace(new RegExp(`{{\\s*${escapedKey}\$.*?\$\\..*?\\s*}}`, 'g'), ''); // 清除未匹配的占位符
-                            data[key].forEach((item, index) => {
-                                const arrayKey = `${fullKey}[${index}]`;
-                                html = replacePlaceholders(html, item, arrayKey);
-                            });
-                        } else {
-                            html = replacePlaceholders(html, data[key], fullKey);
-                        }
-                    } else {
-                        // 构建正则表达式并替换占位符
-                        const regexCamel = new RegExp(`{{\\s*${escapedKey}(?:\$.*?\$|\\.\\w+)?\\s*}}`, "g");
-                        const regexSnake = new RegExp(`{{\\s*${snakeCaseEscapedKey}(?:\$.*?\$|\\.\\w+)?\\s*}}`, "g");
+            // 创建一个隐藏的iframe用于打印
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
 
-                        if (html.match(regexCamel)) {
-                            console.log(`Replacing placeholder: {{${escapedKey}}} with value: ${data[key]}`);
-                            html = html.replace(regexCamel, data[key]);
-                        } else if (html.match(regexSnake)) {
-                            console.log(`Replacing placeholder: {{${snakeCaseEscapedKey}}} with value: ${data[key]}`);
-                            html = html.replace(regexSnake, data[key]);
-                        } else {
-                            console.warn(`No match found for placeholder: {{${escapedKey}}} or {{${snakeCaseEscapedKey}}}`);
-                        }
-                    }
-                }
-                return html;
-            }
-
-            previewHtml = replacePlaceholders(template.content, data);
-
-
-
-            // 在新窗口中显示预览
-            const previewWindow = window.open('', '_blank');
-            previewWindow.document.write(`
+            // 设置iframe内容
+            printFrame.contentDocument.write(`
                 <!DOCTYPE html>
                 <html lang="zh-CN">
                 <head>
                     <meta charset="UTF-8">
-                    <title>订单预览</title>
+                    <title>打印预览</title>
                     <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        @media print {
+                            body { margin: 0; padding: 0; }
+                            .print-container { position: relative; width: 100%; height: 100%; }
+                        }
+                        body { font-family: Arial, sans-serif; }
                         .field { position: absolute; padding: 5px; }
                     </style>
                 </head>
                 <body>
-                    <div id="preview-container" style="position: relative;">
+                    <div class="print-container">
                         ${previewHtml}
                     </div>
-                    <script>
-                        // 应用字段位置信息
-                        const fieldPositions = ${JSON.stringify(template.field_positions)};
-                        const container = document.getElementById('preview-container');
-                        Object.keys(fieldPositions).forEach(fieldName => {
-                            const fieldElement = container.querySelector(\`[data-name="\${fieldName}"]\`);
-                            if (fieldElement) {
-                                const position = fieldPositions[fieldName];
-                                fieldElement.style.left = \`\${position.x}px\`;
-                                fieldElement.style.top = \`\${position.y}px\`;
-                                fieldElement.style.width = \`\${position.width}px\`;
-                                fieldElement.style.height = \`\${position.height}px\`;
-                            }
-                        });
-                    </script>
                 </body>
                 </html>
             `);
+            
+            // 等待iframe内容加载完成后打印
+            printFrame.onload = function() {
+                try {
+                    // 调用打印
+                    printFrame.contentWindow.print();
+                    
+                    // 打印完成后移除iframe
+                    setTimeout(function() {
+                        document.body.removeChild(printFrame);
+                    }, 1000);
+                } catch (e) {
+                    console.error('打印失败:', e);
+                    alert('打印预览失败，请重试');
+                    document.body.removeChild(printFrame);
+                }
+            };
+            
+            // 手动触发onload事件
+            printFrame.contentDocument.close();
         })
-        .catch(error => console.error('加载模板内容失败:', error));
+        .catch(error => {
+            console.error('加载模板内容失败:', error);
+            alert('加载模板内容失败，请重试');
+        });
 });

@@ -13,6 +13,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponse
+import openpyxl
+from datetime import datetime
 
 # 配置日志记录
 logger = logging.getLogger(__name__)
@@ -22,12 +25,10 @@ logger = logging.getLogger(__name__)
 def create_order(request):
     if request.method == 'POST':
         try:
-            # 打印接收到的表单数据
-            logger.info(f"Received POST data: {request.POST}")
-
             # 解析表单数据
             order_data = {
-                'user': request.user,  # 关联当前用户
+                'user': request.user,
+                'company_name': request.POST.get('companyName'),  # 新增公司名称字段
                 'order_number': request.POST.get('orderNo'),  # 运单号
                 'sender': request.POST.get('senderName', ''),  # 发货人
                 'sender_phone': request.POST.get('senderPhone', ''),  # 发货人手机号
@@ -127,23 +128,51 @@ def orders(request):
 @custom_login_required
 @login_required
 def order_history(request):
-    # 获取当前登录用户的订单数据
-    orders = Order.objects.filter(user=request.user)
+    # 获取查询参数
+    receiver = request.GET.get('receiver', '')
+    order_number = request.GET.get('order_number', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # 构建查询条件
+    queryset = Order.objects.filter(user=request.user)
+    
+    if receiver:
+        queryset = queryset.filter(receiver__icontains=receiver)
+    if order_number:
+        queryset = queryset.filter(order_number=order_number)
+    if start_date and end_date:
+        queryset = queryset.filter(date__gte=start_date, date__lte=end_date)
+    
+    # 按日期倒序排序
+    queryset = queryset.order_by('-date')
 
     # 分页设置
-    paginator = Paginator(orders, 10)  # 每页显示10条数据
-    page = request.GET.get('page')  # 获取当前页码
+    paginator = Paginator(queryset, 10)
+    page = request.GET.get('page')
 
     try:
         orders_page = paginator.page(page)
     except PageNotAnInteger:
-        # 如果页码不是整数，则返回第一页
         orders_page = paginator.page(1)
     except EmptyPage:
-        # 如果页码超出范围，则返回最后一页
         orders_page = paginator.page(paginator.num_pages)
 
-    return render(request, 'order_history.html', {'orders': orders_page})
+    # 保留搜索参数在分页链接中
+    params = request.GET.copy()
+    if 'page' in params:
+        del params['page']
+    orders_page.query_params = params.urlencode()
+
+    return render(request, 'order_history.html', {
+        'orders': orders_page,
+        'search_params': {
+            'receiver': receiver,
+            'order_number': order_number,
+            'start_date': start_date,
+            'end_date': end_date
+        }
+    })
 
 
 @csrf_exempt
@@ -341,3 +370,97 @@ def update_order(request, order_id):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     else:
         return JsonResponse({'status': 'error', 'message': '只接受PUT请求'}, status=405)
+
+
+def export_orders(request):
+    if request.method == 'POST':
+        try:
+            order_ids = json.loads(request.POST.get('order_ids', '[]'))
+            orders = Order.objects.filter(id__in=order_ids).prefetch_related('items').order_by('date')
+            
+            # 获取第一个订单日期（如果存在）并转换为datetime对象
+            if orders and orders[0].date:
+                first_date = datetime.strptime(orders[0].date, "%Y-%m-%d")
+                filename_date = first_date.strftime("%m月%d日")
+            else:
+                first_date = datetime.now()
+                filename_date = first_date.strftime("%m月%d日")
+            
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            
+            # 设置标题（使用第一个订单日期）
+            ws.merge_cells('A1:L1')
+            title_cell = ws['A1']
+            title_cell.value = f"{filename_date}发货明细"
+            title_cell.font = openpyxl.styles.Font(bold=True, size=14)
+            title_cell.alignment = openpyxl.styles.Alignment(horizontal='center')
+
+            # 设置表头（新增短途列）
+            headers = ['日期', '客户名', '品名', '包装', '件数', '重量', '方数', 
+                     '打包费', '短途', '运费', '备注', '地址']
+            ws.append(headers)
+            
+            # 设置列宽（地址列加宽）
+            ws.column_dimensions['L'].width = 30
+            ws.column_dimensions['B'].width = 25
+
+            # 初始化合计变量
+            total_quantity = 0
+            total_weight = 0
+            total_volume = 0
+            total_freight = 0
+
+            # 填充数据
+            for order in orders:
+                order_date = datetime.strptime(order.date, "%Y-%m-%d") if order.date else datetime.now()
+                
+                for item in order.items.all():
+                    row = [
+                        order_date.strftime("%m月%d日"),
+                        order.receiver,
+                        item.item_name,
+                        item.package_type,
+                        item.quantity,
+                        item.weight,
+                        item.volume,
+                        item.packaging_fee,
+                        "",  # 短途列留空
+                        item.freight,
+                        order.payment_method,
+                        order.receiver_address
+                    ]
+                    ws.append(row)
+                    
+                    # 累加合计值
+                    total_quantity += item.quantity
+                    total_weight += item.weight
+                    total_volume += item.volume
+                    total_freight += item.freight
+
+            # 添加合计行
+            if orders:  # 只有当有订单时才添加合计行
+                ws.append([
+                    "合计", "", "", "", 
+                    total_quantity, 
+                    total_weight, 
+                    total_volume, 
+                    "", "", 
+                    total_freight, 
+                    "", ""
+                ])
+            
+            # 设置单元格居中
+            for row in ws.iter_rows(min_row=2):
+                for cell in row:
+                    cell.alignment = openpyxl.styles.Alignment(horizontal='center')
+
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+                headers={'Content-Disposition': f'attachment; filename="{filename_date}发货明细.xlsx"'}
+            )
+            wb.save(response)
+            return response
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

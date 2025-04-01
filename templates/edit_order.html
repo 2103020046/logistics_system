@@ -3,15 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>蓝桥物流系统 - 编辑货物托运凭证</title>
+    <title>编辑货物托运凭证</title>
     <link rel="stylesheet" href="/static/css/order.css">
 </head>
 
 <body>
 <div class="container">
     <button type="button" id="backButton" class="back-button"><i class="arrow-icon"></i></button>
-    <h2 style="text-align: center;">编辑货物托运凭证</h2>
     <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
+        <div class="title-container">
+            <div class="title-group">
+                <input type="text" class="title-underline" name="companyName" placeholder="__________________">
+                <h2>物流公司托运单</h2>
+            </div>
+        </div>
         {% csrf_token %}
         <!-- 订单信息表 -->
         <table class="orderTable">
@@ -186,9 +191,17 @@
             </table>
         </div>
 
-        <button type="submit" style="float:right;">提交订单</button>
-    </form>
-    <a href="{% url 'order_history' %}" class="btn btn-secondary">返回历史订单</a>
+        <!-- 在表单底部添加预览按钮 -->
+        <div class="button-group">
+            <button type="button" id="previewButton" class="btn btn-primary">预览并打印</button>
+            <button type="submit" class="btn btn-success">保存修改</button>
+        </div>
+
+        <!-- 添加模板选择下拉框 -->
+        <div class="template-selector">
+            <label for="templateSelector">选择模板：</label>
+            <select id="templateSelector" class="form-control"></select>
+        </div>
 </div>
 
 <script src="/static/js/edit_order.js"></script>

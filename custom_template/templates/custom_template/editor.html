@@ -35,11 +35,11 @@
             <!-- 拖拽字段将显示在这里 -->
         </div>
 
-        <div id="fields" class="fields-area">
+        <div class="fields-area">
             <h2>可拖拽字段</h2>
             <ul class="field-list">
                 {% for field in fields %}
-                    <li class="draggable-field">{{ field }}</li>
+                    <li class="draggable-field" data-field="{{ field }}">{{ field }}</li>
                 {% endfor %}
             </ul>
         </div>

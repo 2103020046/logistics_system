@@ -79,12 +79,14 @@ body {
 
 .field {
     position: absolute;
-    border: 1px dashed gray;
     padding: 5px;
-    width: 20px; /* 设置字段宽度为20px */
-    background-color: rgba(255, 255, 0, 0.5);
+    width: 20px;
     font-size: 0.9rem;
     cursor: move;
+}
+
+.field:hover {
+    outline: 1px dashed #666;
 }
 
 .fields-area {
@@ -158,9 +160,33 @@ body {
 /*新增*/
 #canvas {
     position: relative;
-    width: 100%;
-    height: 500px; /* 根据实际需求调整 */
     background-size: contain; /* 背景图片自适应 */
     background-position: left; /* 图片居中 */
     background-repeat: no-repeat; /* 防止图片重复 */
+}
+
+/* 在现有按钮样式后添加 */
+.upload-background-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    background-color: #6c757d; /* 灰色，区别于其他按钮 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.upload-background-button:hover {
+    opacity: 0.9;
+}
+
+/* 隐藏文件输入的实际按钮 */
+#uploadBackground {
+    display: none;
 }

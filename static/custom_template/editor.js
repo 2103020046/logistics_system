@@ -249,8 +249,8 @@ function createFieldElement(fieldName, x, y) {
     fieldElement.style.position = 'absolute';
     fieldElement.style.left = `${x}px`;
     fieldElement.style.top = `${y}px`;
-    fieldElement.style.width = '220px'; // 默认宽度
-    fieldElement.style.height = '30px'; // 默认高度
+    fieldElement.style.width = '180px';
+    fieldElement.style.height = '30px';
     fieldElement.style.fontSize = '20px';
 
     return fieldElement;

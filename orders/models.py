@@ -6,6 +6,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户', default=1)  # 将订单与用户关联
 
     # 订单基本信息
+    company_name = models.CharField(max_length=100, verbose_name='托运公司名称', blank=True, null=True)
     order_number = models.CharField(max_length=50, unique=True, verbose_name='运单号', default='123456789')
     sender = models.CharField(max_length=100, verbose_name='发货方', default='Default Carrier')
     sender_phone = models.CharField(max_length=20, verbose_name='发货方手机号', default='000-000-0000')

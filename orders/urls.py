@@ -1,6 +1,7 @@
 # orders/urls.py
 from django.urls import path
 from . import views  # 确保导入了视图函数
+from .views import export_orders
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -13,6 +14,5 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
-
-
+    path('orders/export/', export_orders, name='export_orders'),
 ]

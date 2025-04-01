@@ -69,3 +69,157 @@ window.onload = function () {
     updateCancelBtnVisibility();
 };
 
+
+// 在文件末尾添加以下代码
+
+// 加载模板列表
+document.addEventListener('DOMContentLoaded', function() {
+    const templateSelector = document.getElementById('templateSelector');
+    
+    fetch('/custom_template/api/templates/')
+        .then(response => response.json())
+        .then(templates => {
+            templates.forEach(template => {
+                const option = document.createElement('option');
+                option.value = template.id;
+                option.textContent = `${template.name} (${template.created_at})`;
+                templateSelector.appendChild(option);
+            });
+        })
+        .catch(error => console.error('加载模板列表失败:', error));
+});
+
+// 预览打印功能
+document.getElementById('previewButton').addEventListener('click', function() {
+    const selectedTemplateId = document.getElementById('templateSelector').value;
+    if (!selectedTemplateId) {
+        alert('请先选择一个模板');
+        return;
+    }
+
+    // 获取表单数据
+    const formData = new FormData(document.getElementById('orderForm'));
+    const data = {};
+    
+    formData.forEach((value, key) => {
+        const underscoreKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+        const matches = underscoreKey.match(/^(\w+)(?:\[(\d+)\])?\[?(\w+)?\]?$/);
+        
+        if (matches) {
+            const [, base, index, field] = matches;
+            if (index !== undefined) {
+                data[base] = data[base] || [];
+                data[base][index] = data[base][index] || {};
+                if (field) {
+                    data[base][index][field] = value;
+                }
+            } else {
+                data[base] = value;
+            }
+        } else {
+            data[underscoreKey] = value;
+        }
+    });
+
+    // 获取模板内容并替换占位符
+    fetch(`/custom_template/api/templates/${selectedTemplateId}/`)
+        .then(response => response.json())
+        .then(template => {
+            let previewHtml = template.content;
+
+            // 定义字段映射关系
+            const fieldMapping = {
+                '托运公司名称': data.company_name || '',
+                '日期': data.date || '',
+                '发站': data.departure_station || '',
+                '到站': data.arrival_station || '',
+                '查询单号': data.order_no || '',
+                '发货人': data.sender_name || '',
+                '收货人': data.receiver_name || '',
+                '发货人电话': data.sender_phone || '',
+                '收货人电话': data.receiver_phone || '',
+                '发货人地址': data.sender_address || '',
+                '收货人地址': data.receiver_address || '',
+                '品名': data.items?.[0]?.product_name || '',
+                '包装': data.items?.[0]?.package_type || '',
+                '件数': data.items?.[0]?.quantity || '',
+                '重量': data.items?.[0]?.weight || '',
+                '体积': data.items?.[0]?.volume || '',
+                '送货费': data.items?.[0]?.delivery_charge || '',
+                '保险费': data.items?.[0]?.insurance_fee || '',
+                '包装费': data.items?.[0]?.packaging_fee || '',
+                '货物价值': data.items?.[0]?.goods_value || '',
+                '运费': data.items?.[0]?.freight || '',
+                '备注': data.items?.[0]?.remarks || '',
+                '合计费用': data.total_fee || '',
+                '回单要求': data.return_requirement || '',
+                '客户单号': data.customer_order_no || '',
+                '发货人签名': data.sender_sign || '',
+                '收货人签名': data.receiver_sign || '',
+                '身份证号': data.id_card || '',
+                '制单人': data.order_maker || '',
+                '发站电话': data.departure_station_phone || '',
+                '发站地址': data.carrier_address || '',
+                '到站电话': data.arrival_station_phone || '',
+                '到站地址': data.arrival_address || ''
+            };
+
+            // 替换占位符
+            Object.entries(fieldMapping).forEach(([cnField, value]) => {
+                const placeholder = `{{ ${cnField} }}`;
+                previewHtml = previewHtml.replace(new RegExp(placeholder, 'g'), value);
+            });
+
+            // 创建打印iframe
+            const printFrame = document.createElement('iframe');
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+
+            // 设置iframe内容
+            printFrame.contentDocument.write(`
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>打印预览</title>
+                    <style>
+                        @media print {
+                            body { margin: 0; padding: 0; }
+                            .print-container { position: relative; width: 100%; height: 100%; }
+                        }
+                        body { font-family: Arial, sans-serif; }
+                        .field { position: absolute; padding: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-container">
+                        ${previewHtml}
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            // 打印并清理
+            printFrame.onload = function() {
+                try {
+                    printFrame.contentWindow.print();
+                    setTimeout(() => document.body.removeChild(printFrame), 1000);
+                } catch (e) {
+                    console.error('打印失败:', e);
+                    alert('打印预览失败，请重试');
+                    document.body.removeChild(printFrame);
+                }
+            };
+            printFrame.contentDocument.close();
+        })
+        .catch(error => {
+            console.error('加载模板内容失败:', error);
+            alert('加载模板内容失败，请重试');
+        });
+});
+

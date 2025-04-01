@@ -85,9 +85,45 @@ select {
 }
 
 /* 标题样式 */
-h2 {
+/* 修改标题容器样式 */
+.title-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+/* 修改标题组样式 */
+.title-group {
+    display: flex;
+    align-items: baseline; /* 改为基线对齐 */
+    gap: 0; /* 减少间距 */
+}
+
+.title-underline {
+    width: 200px;
+    border: none;
+    border-bottom: 2px solid #333;
     text-align: center;
-    margin-bottom: 20px;
+    font-size: 24px; /* 与h2标题相同大小 */
+    padding: 0 0; /* 减少间距 */
+    font-weight: bold; /* 加粗保持统一 */
+    background: transparent; /* 透明背景 */
+}
+
+h2 {
+    margin: 0;
+    white-space: nowrap;
+    font-size: 24px; /* 确保标题大小一致 */
+}
+
+.title-underline:focus {
+    outline: none;
+    border-bottom-color: #007BFF;
+}
+
+h2 {
+    margin: 0;
+    white-space: nowrap;
 }
 
 
