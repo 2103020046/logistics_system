@@ -70,7 +70,7 @@ body {
 .canvas-area {
     border: 1px solid #ccc;
     background-color: #f9f9f9;
-    width: 907px; /* 设置宽度为907像素 */
+    width: 100%; /* 设置宽度为907像素 */
     height: 527px; /* 设置高度为527像素 */
     position: relative;
     border-radius: 8px;

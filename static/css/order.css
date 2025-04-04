@@ -188,3 +188,19 @@ h2 {
 #previewButton:hover {
     background-color: #45a049;
 }
+
+
+/* 在文件末尾添加必填项星号样式 */
+.required {
+    color: red;
+    margin-left: 3px;
+    font-weight: bold;
+}
+
+/* 可选：为必填项的表头添加特殊样式 */
+.orderTable th[required],
+.goodsTable th[required],
+.additionalTable th[required] {
+    position: relative;
+}
+

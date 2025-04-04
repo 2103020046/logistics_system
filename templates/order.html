@@ -15,43 +15,44 @@
         <!-- 订单信息表 -->
         <div class="title-container">
             <div class="title-group">
-                <input type="text" class="title-underline" name="companyName" placeholder="__________________">
+                <input type="text" class="title-underline" name="companyName" value="道鑫疆" placeholder="__________________">
                 <h2>物流公司托运单</h2>
             </div>
         </div>
         <table class="orderTable">
+            <!-- 修改表头部分，在必填项标签中添加<span class="required">*</span> -->
             <tr>
-                <th>日期</th>
-                <td><input type="text" id="date" name="date" required placeholder="请参考日期格式：2025-01-01"></td>
-                <th>发站</th>
+                <th>日期<span class="required">*</span></th>
+                <td><input type="text" id="date" name="date" required placeholder="YYYY-MM-DD"></td>
+                <th>发站<span class="required">*</span></th>
                 <td><input type="text" id="departureStation" name="departureStation" value="广州" required></td>
-                <th>到站</th>
+                <th>到站<span class="required">*</span></th>
                 <td><input type="text" id="arrivalStation" name="arrivalStation" value="霍尔果斯" required></td>
-                <th>运输方式</th>
-                <td><input type="text" id="transportMethod" name="transportMethod" required></td>
+                <th>运输方式<span class="required">*</span></th>
+                <td><input type="text" id="transportMethod" name="transportMethod" value="普快" required></td>
             </tr>
             <tr>
-                <th>运单号</th>
-                <td colspan="3"><input type="text" id="orderNo" name="orderNo" value="" required></td>
+                <th>运单号<span class="required">*</span></th>
+                <td colspan="3"><input type="text" id="orderNo" name="orderNo" required></td>
                 <th>货号</th>
                 <td colspan="3"><input type="text" id="productCode" name="productCode" value=""></td>
             </tr>
             <tr>
-                <th>发货方</th>
+                <th>发货方<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="senderName" name="senderName" required value=""></td>
-                <th>收货方</th>
+                <th>收货方<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="receiverName" name="receiverName" required value=""></td>
             </tr>
             <tr>
-                <th>手机号</th>
+                <th>手机号<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="senderPhone" name="senderPhone" value=""></td>
-                <th>手机号</th>
+                <th>手机号<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="receiverPhone" name="receiverPhone" required value=""></td>
             </tr>
             <tr>
-                <th>详细地址</th>
+                <th>详细地址<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="senderAddress" name="senderAddress" value=""></td>
-                <th>详细地址</th>
+                <th>详细地址<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="receiverAddress" name="receiverAddress" required value="">
                 </td>
             </tr>
@@ -95,9 +96,9 @@
         <!-- 额外信息表 -->
         <table class="additionalTable">
             <tr>
-                <th>总运费</th>
+                <th>总运费<span class="required">*</span></th>
                 <td><input type="number" id="totalFee" name="totalFee" required value="0"></td>
-                <th>付款方式</th>
+                <th>付款方式<span class="required">*</span></th>
                 <td>
                     <select id="paymentMethod" name="paymentMethod" required>
                         <option value="提付">提付</option>
@@ -105,11 +106,11 @@
                         <option value="月结">月结</option>
                     </select>
                 </td>
-                <th>交货方式</th>
+                <th>交货方式<span class="required">*</span></th>
                 <td>
                     <select id="deliveryMethod" name="deliveryMethod" required>
-                        <option value="提付">送货</option>
-                        <option value="到付">自提</option>
+                        <option value="送货">送货</option>
+                        <option value="自提">自提</option>
                     </select>
                 </td>
                 <th>客户单号</th>
@@ -132,20 +133,20 @@
                 <td><input type="text" id="receiverSign" name="receiverSign"></td>
                 <th>身份证号</th>
                 <td><input type="number" id="idCard" name="idCard"></td>
-                <th>制单人</th>
+                <th>制单人<span class="required">*</span></th>
                 <td><input type="text" id="orderMaker" name="orderMaker" value="张少林"></td>
             </tr>
             <tr>
-                <th>发站查询电话</th>
-                <td colspan="3"><input type="text" id="departureStationPhone" name="departureStationPhone"></td>
-                <th>发站地址</th>
-                <td colspan="3"><input type="text" id="carrierAddress" name="carrierAddress" required></td>
+                <th>发站查询电话<span class="required">*</span></th>
+                <td colspan="3"><input type="text" id="departureStationPhone" name="departureStationPhone" value="13974960951"></td>
+                <th>发站地址<span class="required">*</span></th>
+                <td colspan="3"><input type="text" id="carrierAddress" name="carrierAddress" value="广州安发物流园A5栋53-58" required></td>
             </tr>
             <tr>
-                <th>到站查询电话</th>
-                <td colspan="3"><input type="text" id="arrivalStationPhone" name="arrivalStationPhone"></td>
-                <th>到站地址</th>
-                <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress"></td>
+                <th>到站查询电话<span class="required">*</span></th>
+                <td colspan="3"><input type="text" id="arrivalStationPhone" name="arrivalStationPhone" value="13629938726"></td>
+                <th>到站地址<span class="required">*</span></th>
+                <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress" value="新疆乌鲁木齐"></td>
             </tr>
         </table>
         <!-- 模板选择区域 -->

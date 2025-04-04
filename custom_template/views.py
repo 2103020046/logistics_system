@@ -28,7 +28,7 @@ def template_editor(request):
         '发货人电话', '收货人电话', '发货人地址', '收货人地址', '品名',
         '包装', '件数', '重量', '体积',
         '送货费', '保险费', '包装费', '货物价值',
-        '运费', '备注', '合计费用', '回单要求',
+        '运费', '备注', '合计费用', '付款方式', '交货方式', '回单要求',
         '客户单号', '发货人签名', '收货人签名', '身份证号', '制单人',
         '发站电话', '发站地址', '到站电话', '到站地址'
     ]
@@ -104,6 +104,8 @@ def generate_pdf(request, template_id, order_id):
         '运费': 'items[0].freight',
         '备注': 'items[0].remarks',
         '合计费用': 'total_fee',
+        '付款方式': 'payment_method',
+        '交货方式': 'delivery_method',
         '回单要求': 'return_requirement',
         '客户单号': 'customer_order_no',
         '发货人签名': 'sender_sign',

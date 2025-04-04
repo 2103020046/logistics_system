@@ -214,6 +214,8 @@ document.getElementById('previewButton').addEventListener('click', function () {
                 '运费': data.items?.[0]?.freight || '',
                 '备注': data.items?.[0]?.remarks || '',
                 '合计费用': data.total_fee || '',
+                '付款方式': data.payment_method || '',
+                '交货方式': data.delivery_method || '',
                 '回单要求': data.return_requirement || '',
                 '客户单号': data.customer_order_no || '',
                 '发货人签名': data.sender_sign || '',
@@ -291,4 +293,44 @@ document.getElementById('previewButton').addEventListener('click', function () {
             console.error('加载模板内容失败:', error);
             alert('加载模板内容失败，请重试');
         });
+});
+
+
+// 在文件顶部添加日期初始化函数
+document.addEventListener('DOMContentLoaded', function() {
+    // 自动设置当前日期
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // 格式化为YYYY-MM-DD
+        dateInput.value = formattedDate;
+        dateInput.placeholder = formattedDate;
+    }
+});
+// 在DOMContentLoaded事件中添加运单号生成逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    // 自动设置当前日期
+    const dateInput = document.getElementById('date');
+    const orderNoInput = document.getElementById('orderNo');
+    
+    if (dateInput && orderNoInput) {
+        const today = new Date();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        
+        // 获取今天的订单数量（需要后端API支持）
+        fetch('/api/orders/today_count/')
+            .then(response => response.json())
+            .then(data => {
+                const todayCount = data.count || 0;
+                orderNoInput.value = `${month}${day}-${todayCount + 1}`;
+                orderNoInput.placeholder = orderNoInput.value;
+            })
+            .catch(error => {
+                console.error('获取今日订单数失败:', error);
+                // 默认从1开始
+                orderNoInput.value = `${month}${day}-1`;
+                orderNoInput.placeholder = orderNoInput.value;
+            });
+    }
 });

@@ -464,3 +464,14 @@ def export_orders(request):
             
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+
+# 获取当天订单数量，生成运单号
+@csrf_exempt
+def get_today_order_count(request):
+    if request.method == 'GET':
+        today = datetime.now().date()
+        count = Order.objects.filter(date=today.strftime("%Y-%m-%d")).count()
+        return JsonResponse({'count': count})
+    return JsonResponse({'count': 0})
