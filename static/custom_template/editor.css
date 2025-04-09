@@ -129,7 +129,7 @@ body {
     gap: 20px; /* 设置按钮之间的间距 */
 }
 
-.save-button, .view-templates-button {
+.save-button, .view-templates-button, .btn-secondary {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     display: inline-flex; /* 使用 Flex 布局以确保按钮内容居中 */
@@ -156,6 +156,15 @@ body {
     opacity: 0.9;
 }
 
+.btn-secondary {
+    background-color: #00ffe5;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #00ffe5;
+    color: white;
+}
 
 /*新增*/
 #canvas {
@@ -189,4 +198,20 @@ body {
 /* 隐藏文件输入的实际按钮 */
 #uploadBackground {
     display: none;
+}
+
+/* 在文件末尾添加特定字段样式 */
+/* 确保编辑器中的样式与打印样式一致 */
+.field[data-name="托运公司名称"] {
+    width: 200px !important;
+    font-size: 24px !important;
+}
+
+.field[data-name="发货人"],
+.field[data-name="发货人地址"],
+.field[data-name="收货人地址"], 
+.field[data-name="发站地址"],
+.field[data-name="到站地址"] {
+    width: 260px !important;
+    font-size: 20px !important;
 }

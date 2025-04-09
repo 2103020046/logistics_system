@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+# 在Order模型中添加字段
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户', default=1)  # 将订单与用户关联
 
@@ -40,6 +41,11 @@ class Order(models.Model):
     receiver_sign = models.CharField(max_length=100, verbose_name='收货人签名', blank=True, null=True)
     id_card = models.CharField(max_length=20, verbose_name='身份证号', blank=True, null=True)
     order_maker = models.CharField(max_length=100, verbose_name='制单人', blank=True, null=True)
+    fee_wan = models.CharField(max_length=10, verbose_name='万位金额', blank=True)
+    fee_qian = models.CharField(max_length=10, verbose_name='仟位金额', blank=True)
+    fee_bai = models.CharField(max_length=10, verbose_name='佰位金额', blank=True)
+    fee_shi = models.CharField(max_length=10, verbose_name='拾位金额', blank=True)
+    fee_ge = models.CharField(max_length=10, verbose_name='个位金额', blank=True)
 
     def __str__(self):
         return self.order_number
@@ -53,7 +59,7 @@ class Item(models.Model):
     item_name = models.CharField(max_length=100, verbose_name='品名')
     package_type = models.CharField(max_length=50, verbose_name='包装')
     quantity = models.IntegerField(verbose_name='件数')
-    weight = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='重量(kg)')
+    weight = models.IntegerField(verbose_name='重量(kg)')
     volume = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='体积(m³)')
     delivery_charge = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='送（提）货费')
     insurance_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='保险费')

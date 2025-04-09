@@ -135,14 +135,27 @@ h2 {
     /* 略小于100%避免因边框导致溢出 */
 }
 
+/* 修改返回按钮样式 */
 .back-button {
-    position: absolute;
-    top: 20px; /* 根据实际情况调整 */
-    left: 20px; /* 根据实际情况调整 */
-    background-color: transparent;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    padding: 10px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 14px;
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+/* 移除原来的定位样式 */
+.back-button .arrow-icon {
+    display: none;
 }
 
 .back-button .arrow-icon {
@@ -180,9 +193,9 @@ h2 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px; /* 确保与上方元素有足够的间距 */
+    margin-top: 10px;
     float: right;
-    margin-right: 20px; /* 设置右侧间距 */
+    margin-right: 20px;
 }
 
 #previewButton:hover {
@@ -202,5 +215,25 @@ h2 {
 .goodsTable th[required],
 .additionalTable th[required] {
     position: relative;
+}
+
+
+/* 确保隐藏行不占用空间 */
+tr[style="display: none;"] {
+    display: none !important;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+/* 隐藏行中的输入框样式 */
+tr[style="display: none;"] input {
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    visibility: hidden;
 }
 

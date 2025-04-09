@@ -244,15 +244,24 @@ document.addEventListener('DOMContentLoaded', function () {
 function createFieldElement(fieldName, x, y) {
     const fieldElement = document.createElement('div');
     fieldElement.className = 'field draggable';
-    fieldElement.setAttribute('data-name', fieldName);
+    fieldElement.setAttribute('data-name', fieldName); // 确保设置了data-name属性
     fieldElement.textContent = `{{ ${fieldName} }}`;
     fieldElement.style.position = 'absolute';
     fieldElement.style.left = `${x}px`;
     fieldElement.style.top = `${y}px`;
-    fieldElement.style.width = '180px';
+    
+    // 根据字段名称设置不同样式
+    if (fieldName === '托运公司名称') {
+        fieldElement.style.width = '200px';
+        fieldElement.style.fontSize = '24px';
+    } else if (['发货人', '发货人地址', '收货人地址', '发站地址', '到站地址'].includes(fieldName)) {
+        fieldElement.style.width = '260px';
+    } else {
+        fieldElement.style.width = '180px';
+        fieldElement.style.fontSize = '20px';
+    }
+    
     fieldElement.style.height = '30px';
-    fieldElement.style.fontSize = '20px';
-
     return fieldElement;
 }
 

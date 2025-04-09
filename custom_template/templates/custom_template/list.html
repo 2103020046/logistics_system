@@ -34,6 +34,16 @@
         .btn-danger {
             background-color: #dc3545;
         }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -68,7 +78,11 @@
     </tbody>
 </table>
 
-<p><a href="{% url 'custom_template:editor' %}" class="btn">新建模板</a></p>
+<!-- 在文件底部，</table>标签后添加 -->
+<p class="d-flex justify-content-between mt-4">
+    <a href="{% url 'custom_template:editor' %}" class="btn">新建模板</a>
+    <a href="/" class="btn btn-secondary">返回首页</a>
+</p>
 
 <!-- 引入 JavaScript 实现“查看”功能 -->
 <script>

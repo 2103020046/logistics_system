@@ -159,7 +159,7 @@ document.getElementById('previewButton').addEventListener('click', function () {
     
     // 将表单数据转换为对象，并转换为下划线格式
     formData.forEach((value, key) => {
-        // 将驼峰命名转换为下划线命名
+        // 将驼峰命名转换为下划线命名，如：companyName -> company_name
         const underscoreKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
         
         // 处理数组形式的字段名 (如 items[0][productName])
@@ -190,6 +190,7 @@ document.getElementById('previewButton').addEventListener('click', function () {
             let previewHtml = template.content;
 
             // 定义字段映射关系
+            // 在fieldMapping中添加新增字段
             const fieldMapping = {
                 '托运公司名称': data.company_name || '',
                 '日期': data.date || '',
@@ -213,6 +214,11 @@ document.getElementById('previewButton').addEventListener('click', function () {
                 '货物价值': data.items?.[0]?.goods_value || '',
                 '运费': data.items?.[0]?.freight || '',
                 '备注': data.items?.[0]?.remarks || '',
+                '万': data.fee_wan || '',
+                '仟': data.fee_qian || '',
+                '佰': data.fee_bai || '',
+                '拾': data.fee_shi || '',
+                '个': data.fee_ge || '',
                 '合计费用': data.total_fee || '',
                 '付款方式': data.payment_method || '',
                 '交货方式': data.delivery_method || '',
@@ -310,8 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 在DOMContentLoaded事件中添加运单号生成逻辑
 document.addEventListener('DOMContentLoaded', function() {
     // 自动设置当前日期
-    const dateInput = document.getElementById('date');
-    const orderNoInput = document.getElementById('orderNo');
+    const dateInput = document.getElementById('date');    const orderNoInput = document.getElementById('orderNo');
     
     if (dateInput && orderNoInput) {
         const today = new Date();
@@ -332,5 +337,76 @@ document.addEventListener('DOMContentLoaded', function() {
                 orderNoInput.value = `${month}${day}-1`;
                 orderNoInput.placeholder = orderNoInput.value;
             });
+    }
+});
+
+// 在文件顶部添加数字转中文大写的函数
+// 修改numberToChinese函数
+function numberToChinese(num) {
+    const chineseNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+    const units = ['', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿'];
+    
+    num = parseInt(num) || 0;
+    if (num === 0) return '零';
+    
+    const strNum = String(num);
+    let result = '';
+    let zeroCount = 0;
+    
+    for (let i = 0; i < strNum.length; i++) {
+        const digit = parseInt(strNum[i]);
+        const unitIndex = strNum.length - 1 - i;
+        const unit = units[unitIndex];
+        
+        if (digit === 0) {
+            zeroCount++;
+        } else {
+            // 处理连续的零
+            if (zeroCount > 0) {
+                result += '零';
+                zeroCount = 0;
+            }
+            result += chineseNums[digit] + unit;
+        }
+    }
+    
+    // 去除末尾的零
+    result = result.replace(/零+$/, '');
+    
+    // 处理拆分后的数字
+    const digits = String(num).padStart(5, '0').split('').reverse();
+    const splitResult = {
+        '万': digits[4] !== '0' ? chineseNums[digits[4]] : '',
+        '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '',
+        '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '',
+        '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '',
+        '个': digits[0] !== '0' ? chineseNums[digits[0]] : ''
+    };
+    
+    return {split: splitResult, full: result || '零'};
+}
+
+// 修改事件监听逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    const totalFeeInput = document.getElementById('totalFee');
+    const feeDescriptionInput = document.getElementById('feeDescription');
+    
+    if (totalFeeInput && feeDescriptionInput) {
+        // 确保合计金额输入框是只读的
+        feeDescriptionInput.readOnly = true;
+        
+        totalFeeInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const num = parseFloat(value) || 0;
+            const chinese = numberToChinese(num);
+            
+            // 更新各个输入框
+            document.getElementById('feeWan').value = chinese.split['万'];
+            document.getElementById('feeQian').value = chinese.split['仟'];
+            document.getElementById('feeBai').value = chinese.split['佰'];
+            document.getElementById('feeShi').value = chinese.split['拾'];
+            document.getElementById('feeGe').value = chinese.split['个'];
+            feeDescriptionInput.value = chinese.full;
+        });
     }
 });

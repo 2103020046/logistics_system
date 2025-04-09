@@ -26,6 +26,7 @@ def create_order(request):
     if request.method == 'POST':
         try:
             # 解析表单数据
+            # 在create_order视图的order_data中添加
             order_data = {
                 'user': request.user,
                 'company_name': request.POST.get('companyName'),  # 新增公司名称字段
@@ -56,7 +57,12 @@ def create_order(request):
                 'sender_sign': request.POST.get('senderSign'),  # 发货人签名
                 'receiver_sign': request.POST.get('receiverSign'),  # 收货人签名
                 'id_card': request.POST.get('idCard'),  # 身份证号
-                'order_maker': request.POST.get('orderMaker')  # 制单人
+                'order_maker': request.POST.get('orderMaker'),  # 制单人
+                'fee_wan': request.POST.get('fee_wan', ''),
+                'fee_qian': request.POST.get('fee_qian', ''),
+                'fee_bai': request.POST.get('fee_bai', ''),
+                'fee_shi': request.POST.get('fee_shi', ''),
+                'fee_ge': request.POST.get('fee_ge', ''),
             }
 
             # 确保所有必需字段都有值

@@ -70,7 +70,10 @@
             {% endif %}
         </tbody>
         <!-- 在表格下方添加导出按钮 -->
-        <div class="d-flex justify-content-end mt-3">
+        <!-- 在文件底部，</div>容器结束标签前添加 -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/" class="btn btn-secondary">返回首页</a>
+            <!-- 保持原有的导出按钮 -->
             <button id="exportSelected" class="btn btn-success">导出选中订单</button>
         </div>
     </table>

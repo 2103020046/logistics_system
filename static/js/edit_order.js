@@ -128,6 +128,7 @@ document.getElementById('previewButton').addEventListener('click', function() {
             let previewHtml = template.content;
 
             // 定义字段映射关系
+            // 修改预览打印的fieldMapping部分
             const fieldMapping = {
                 '托运公司名称': data.company_name || '',
                 '日期': data.date || '',
@@ -151,9 +152,16 @@ document.getElementById('previewButton').addEventListener('click', function() {
                 '货物价值': data.items?.[0]?.goods_value || '',
                 '运费': data.items?.[0]?.freight || '',
                 '备注': data.items?.[0]?.remarks || '',
+                '万': data.fee_wan || '',
+                '仟': data.fee_qian || '',
+                '佰': data.fee_bai || '',
+                '拾': data.fee_shi || '',
+                '个': data.fee_ge || '',
                 '合计费用': data.total_fee || '',
                 '回单要求': data.return_requirement || '',
                 '客户单号': data.customer_order_no || '',
+                '付款方式': data.payment_method || '',
+                '交货方式': data.delivery_method || '',
                 '发货人签名': data.sender_sign || '',
                 '收货人签名': data.receiver_sign || '',
                 '身份证号': data.id_card || '',
@@ -181,6 +189,7 @@ document.getElementById('previewButton').addEventListener('click', function() {
             document.body.appendChild(printFrame);
 
             // 设置iframe内容
+            // 在预览打印的iframe中添加样式
             printFrame.contentDocument.write(`
                 <!DOCTYPE html>
                 <html lang="zh-CN">
@@ -194,6 +203,21 @@ document.getElementById('previewButton').addEventListener('click', function() {
                         }
                         body { font-family: Arial, sans-serif; }
                         .field { position: absolute; padding: 5px; }
+                        
+                        /* 添加特定字段的打印样式 */
+                        .field[data-name="托运公司名称"] {
+                            width: 200px !important;
+                            font-size: 24px !important;
+                        }
+                        
+                        .field[data-name="发货人"],
+                        .field[data-name="发货人地址"],
+                        .field[data-name="收货人地址"],
+                        .field[data-name="发站地址"],
+                        .field[data-name="到站地址"] {
+                            width: 260px !important;
+                            font-size: 20px !important;
+                        }
                     </style>
                 </head>
                 <body>
@@ -222,4 +246,80 @@ document.getElementById('previewButton').addEventListener('click', function() {
             alert('加载模板内容失败，请重试');
         });
 });
+
+// 在DOMContentLoaded事件中添加金额自动更新逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    const totalFeeInput = document.getElementById('totalFee');
+    const feeDescriptionInput = document.getElementById('feeDescription');
+    
+    if (totalFeeInput && feeDescriptionInput) {
+        // 确保合计金额输入框是只读的
+        feeDescriptionInput.readOnly = true;
+        
+        // 初始化金额显示
+        updateChineseAmount(totalFeeInput.value);
+        
+        // 监听金额变化
+        totalFeeInput.addEventListener('input', function() {
+            updateChineseAmount(this.value);
+        });
+    }
+});
+
+// 金额转中文大写函数
+function updateChineseAmount(value) {
+    const num = parseFloat(value) || 0;
+    const chinese = numberToChinese(num);
+    
+    // 更新各个输入框
+    document.getElementById('feeWan').value = chinese.split['万'] || '';
+    document.getElementById('feeQian').value = chinese.split['仟'] || '';
+    document.getElementById('feeBai').value = chinese.split['佰'] || '';
+    document.getElementById('feeShi').value = chinese.split['拾'] || '';
+    document.getElementById('feeGe').value = chinese.split['个'] || '';
+    document.getElementById('feeDescription').value = chinese.full || '零';
+}
+
+// 数字转中文大写函数
+function numberToChinese(num) {
+    const chineseNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+    const units = ['', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿'];
+    
+    num = parseInt(num) || 0;
+    if (num === 0) return {split: {}, full: '零'};
+    
+    const strNum = String(num);
+    let result = '';
+    let zeroCount = 0;
+    
+    for (let i = 0; i < strNum.length; i++) {
+        const digit = parseInt(strNum[i]);
+        const unitIndex = strNum.length - 1 - i;
+        const unit = units[unitIndex];
+        
+        if (digit === 0) {
+            zeroCount++;
+        } else {
+            if (zeroCount > 0) {
+                result += '零';
+                zeroCount = 0;
+            }
+            result += chineseNums[digit] + unit;
+        }
+    }
+    
+    result = result.replace(/零+$/, '');
+    
+    // 处理拆分后的数字
+    const digits = String(num).padStart(5, '0').split('').reverse();
+    const splitResult = {
+        '万': digits[4] !== '0' ? chineseNums[digits[4]] : '',
+        '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '',
+        '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '',
+        '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '',
+        '个': digits[0] !== '0' ? chineseNums[digits[0]] : ''
+    };
+    
+    return {split: splitResult, full: result || '零'};
+}
 

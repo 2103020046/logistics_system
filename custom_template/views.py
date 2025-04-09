@@ -23,6 +23,7 @@ def custom_login_required(view_func):
 @custom_login_required
 @login_required
 def template_editor(request):
+    # 在fields列表中添加以下字段
     fields = [
         '托运公司名称', '日期', '发站', '到站', '查询单号', '发货人', '收货人',
         '发货人电话', '收货人电话', '发货人地址', '收货人地址', '品名',
@@ -30,7 +31,7 @@ def template_editor(request):
         '送货费', '保险费', '包装费', '货物价值',
         '运费', '备注', '合计费用', '付款方式', '交货方式', '回单要求',
         '客户单号', '发货人签名', '收货人签名', '身份证号', '制单人',
-        '发站电话', '发站地址', '到站电话', '到站地址'
+        '发站电话', '发站地址', '到站电话', '到站地址', '万', '仟', '佰', '拾', '个'
     ]
 
     template_id = request.GET.get('template_id')
@@ -80,42 +81,14 @@ def generate_pdf(request, template_id, order_id):
     order = Order.objects.get(id=order_id)
 
     # 创建中英文字段映射
+    # 在generate_pdf函数的field_mapping中添加
     field_mapping = {
-        '托运公司名称': 'company_name',
-        '日期': 'date',
-        '发站': 'departure_station',
-        '到站': 'arrival_station',
-        '查询单号': 'order_no',
-        '发货人': 'sender_name',
-        '收货人': 'receiver_name',
-        '发货人电话': 'sender_phone',
-        '收货人电话': 'receiver_phone',
-        '发货人地址': 'sender_address',
-        '收货人地址': 'receiver_address',
-        '品名': 'items[0].product_name',
-        '包装': 'items[0].package_type',
-        '件数': 'items[0].quantity',
-        '重量': 'items[0].weight',
-        '体积': 'items[0].volume',
-        '送货费': 'items[0].delivery_charge',
-        '保险费': 'items[0].insurance_fee',
-        '包装费': 'items[0].packaging_fee',
-        '货物价值': 'items[0].goods_value',
-        '运费': 'items[0].freight',
-        '备注': 'items[0].remarks',
-        '合计费用': 'total_fee',
-        '付款方式': 'payment_method',
-        '交货方式': 'delivery_method',
-        '回单要求': 'return_requirement',
-        '客户单号': 'customer_order_no',
-        '发货人签名': 'sender_sign',
-        '收货人签名': 'receiver_sign',
-        '身份证号': 'id_card',
-        '制单人': 'order_maker',
-        '发站电话': 'departure_station_phone',
-        '发站地址': 'carrier_address',
-        '到站电话': 'arrival_station_phone',
-        '到站地址': 'arrival_address'
+        # ...原有映射...
+        '万': 'fee_wan',
+        '仟': 'fee_qian',
+        '佰': 'fee_bai',
+        '拾': 'fee_shi',
+        '个': 'fee_ge'
     }
 
     buffer = BytesIO()

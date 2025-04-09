@@ -9,11 +9,10 @@
 
 <body>
 <div class="container">
-    <button type="button" id="backButton" class="back-button"><i class="arrow-icon"></i></button>
     <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
         <div class="title-container">
             <div class="title-group">
-                <input type="text" class="title-underline" name="companyName" placeholder="__________________">
+                <input style="text-align: right; font-size: 22px;" type="text" class="title-underline" name="companyName" value="道鑫疆" placeholder="__________________">
                 <h2>物流公司托运单</h2>
             </div>
         </div>
@@ -121,33 +120,41 @@
         <!-- 额外信息表 -->
         <div class="additionalInfo">
             <table class="additionalTable">
-                <tr>
-                    <th>总运费</th>
-                    <td><input type="number" id="totalFee" name="totalFee" required value="{{ order.total_freight }}">
-                    </td>
-                    <th>付款方式</th>
-                    <td>
-                        <select id="paymentMethod" name="paymentMethod" required>
-                            <option value="提付" {% if order.payment_method == '提付' %}selected{% endif %}>提付
-                            </option>
-                            <option value="到付" {% if order.payment_method == '到付' %}selected{% endif %}>到付
-                            </option>
-                            <option value="月结" {% if order.payment_method == '月结' %}selected{% endif %}>月结
-                            </option>
-                        </select>
-                    </td>
-                    <th>交货方式</th>
-                    <td>
-                        <select id="deliveryMethod" name="deliveryMethod" required>
-                            <option value="送货" {% if order.delivery_method == '送货' %}selected{% endif %}>送货
-                            </option>
-                            <option value="自提" {% if order.delivery_method == '自提' %}selected{% endif %}>自提
-                            </option>
-                        </select>
-                    </td>
-                    <th>客户单号</th>
-                    <td><input type="number" id="customerOrderNo" name="customerOrderNo" required
-                               value="{{ order.customer_order_no }}"></td>
+                <!-- 在additionalTable表格中添加隐藏的金额拆分行 -->
+                <tr style="display: none;">
+                    <td><input type="text" id="feeWan" name="fee_wan" readonly></td>
+                    <td><input type="text" id="feeQian" name="fee_qian" readonly></td>
+                    <td><input type="text" id="feeBai" name="fee_bai" readonly></td>
+                    <td><input type="text" id="feeShi" name="fee_shi" readonly></td>
+                    <td><input type="text" id="feeGe" name="fee_ge" readonly></td>
+                </tr>
+                <th>总运费</th>
+                <td><input type="number" id="totalFee" name="totalFee" required value="{{ order.total_freight }}">
+                </td>
+                <th>合计金额</th>
+                <td><input type="text" id="feeDescription" name="feeDescription"
+                               value="{{ order.expense_details }}"></td>
+                <th>付款方式</th>
+                <td>
+                    <select id="paymentMethod" name="paymentMethod" required>
+                        <option value="提付" {% if order.payment_method == '提付' %}selected{% endif %}>提付
+                        </option>
+                        <option value="现付" {% if order.payment_method == '现付' %}selected{% endif %}>现付
+                        </option>
+                        <option value="月结" {% if order.payment_method == '月结' %}selected{% endif %}>月结
+                        </option>
+                    </select>
+                </td>
+                <th>交货方式</th>
+                <td>
+                    <select id="deliveryMethod" name="deliveryMethod" required>
+                        <option value="送货" {% if order.delivery_method == '送货' %}selected{% endif %}>送货
+                        </option>
+                        <option value="自提" {% if order.delivery_method == '自提' %}selected{% endif %}>自提
+                        </option>
+                    </select>
+                </td>
+                
                 </tr>
                 <tr>
                     <th>回单要求</th>
@@ -156,9 +163,9 @@
                     <th>其他支出</th>
                     <td><input type="text" id="otherExpenses" name="otherExpenses" value="{{ order.other_expenses }}">
                     </td>
-                    <th>费用说明</th>
-                    <td><input type="text" id="feeDescription" name="feeDescription"
-                               value="{{ order.expense_details }}"></td>
+                    <th>客户单号</th>
+                    <td><input type="number" id="customerOrderNo" name="customerOrderNo" required
+                               value="{{ order.customer_order_no }}"></td>
                     <th>承运商</th>
                     <td><input type="text" id="carrier" name="carrier" required value="{{ order.carrier }}"></td>
                 </tr>
@@ -193,6 +200,8 @@
 
         <!-- 在表单底部添加预览按钮 -->
         <div class="button-group">
+            <!-- 修改返回按钮 -->
+        <button type="button" id="backButton" class="back-button">返回首页</button>
             <button type="button" id="previewButton" class="btn btn-primary">预览并打印</button>
             <button type="submit" class="btn btn-success">保存修改</button>
         </div>
@@ -209,6 +218,16 @@
     // 在页面加载时初始化 orderId
     const orderId = document.getElementById('order-id').value;
 
+    // 在表单提交处理函数中确保包含金额拆分字段
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // 确保金额拆分字段已更新
+        updateChineseAmount(document.getElementById('totalFee').value);
+        
+        // 继续原有表单提交逻辑...
+    });
+    
     document.getElementById('orderForm').addEventListener('submit', function (event) {
         event.preventDefault();
 

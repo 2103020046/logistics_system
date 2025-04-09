@@ -9,13 +9,12 @@
 
 <body>
 <div class="container">
-    <button type="button" id="backButton" class="back-button"><i class="arrow-icon"></i></button>
-    <!-- 修改标题部分 -->
+    
     <form id="orderForm" method="post">
         <!-- 订单信息表 -->
         <div class="title-container">
             <div class="title-group">
-                <input type="text" class="title-underline" name="companyName" value="道鑫疆" placeholder="__________________">
+                <input style="text-align: right; font-size: 22px;" type="text" class="title-underline" name="companyName" value="道鑫疆" placeholder="__________________">
                 <h2>物流公司托运单</h2>
             </div>
         </div>
@@ -80,7 +79,7 @@
                 <td><input type="text" name="items[0][productName]" required></td>
                 <td><input type="text" name="items[0][packageType]" required></td>
                 <td><input type="number" step="1" name="items[0][quantity]" value="1"></td>
-                <td><input type="number" step="0.1" name="items[0][weight]" value="0.0"></td>
+                <td><input type="number" step="1" name="items[0][weight]" value="0"></td>
                 <td><input type="number" step="0.1" name="items[0][volume]" value="0.0"></td>
                 <td><input type="number" step="1" name="items[0][deliveryCharge]" value="0"></td>
                 <td><input type="number" step="1" name="items[0][insuranceFee]" value="0"></td>
@@ -95,14 +94,17 @@
         <button type="button" id="cancel-row-btn" style="display: none;">取消</button>
         <!-- 额外信息表 -->
         <table class="additionalTable">
+            <!-- 在additionalTable表格中找到合计金额行 -->
             <tr>
                 <th>总运费<span class="required">*</span></th>
                 <td><input type="number" id="totalFee" name="totalFee" required value="0"></td>
+                <th>合计金额</th>
+                <td><input type="text" id="feeDescription" name="feeDescription" readonly></td>
                 <th>付款方式<span class="required">*</span></th>
                 <td>
                     <select id="paymentMethod" name="paymentMethod" required>
                         <option value="提付">提付</option>
-                        <option value="到付">到付</option>
+                        <option value="现付">现付</option>
                         <option value="月结">月结</option>
                     </select>
                 </td>
@@ -113,16 +115,14 @@
                         <option value="自提">自提</option>
                     </select>
                 </td>
-                <th>客户单号</th>
-                <td><input type="number" id="customerOrderNo" name="customerOrderNo" required></td>
             </tr>
             <tr>
                 <th>回单要求</th>
                 <td><input type="text" id="returnRequirement" name="returnRequirement"></td>
                 <th>其他支出</th>
                 <td><input type="text" id="otherExpenses" name="otherExpenses"></td>
-                <th>费用说明</th>
-                <td><input type="text" id="feeDescription" name="feeDescription"></td>
+                <th>客户单号</th>
+                <td><input type="number" id="customerOrderNo" name="customerOrderNo" required></td>
                 <th>承运商</th>
                 <td><input type="text" id="carrier" name="carrier"></td>
             </tr>
@@ -149,6 +149,12 @@
                 <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress" value="新疆乌鲁木齐"></td>
             </tr>
         </table>
+        <!-- 修改返回按钮 -->
+        <button type="button" id="backButton" class="back-button">返回首页</button>
+        <button type="button" id="previewButton" style="float:right; margin-right: 10px;">预览</button>
+        <!-- 修改标题部分 -->
+        <button type="submit" style="float:right;">提交订单</button>
+        {#        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>#}
         <!-- 模板选择区域 -->
         <div>
             <label for="templateSelector">选择模板：</label>
@@ -156,9 +162,14 @@
                 <option value="">请选择模板</option>
             </select>
         </div>
-        <button type="button" id="previewButton" style="float:right; margin-right: 10px;">预览</button>
-        <button type="submit" style="float:right;">提交订单</button>
-        {#        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>#}
+        <!-- 在additionalTable表格的最后添加隐藏的金额拆分行 -->
+        <tr style="display: none;">
+            <td><input type="text" id="feeWan" name="fee_wan" readonly style="display: none; width: 50px;"></td>
+            <td><input type="text" id="feeQian" name="fee_qian" readonly style="display: none; width: 50px;"></td>
+            <td><input type="text" id="feeBai" name="fee_bai" readonly style="display: none; width: 50px;"></td>
+            <td><input type="text" id="feeShi" name="fee_shi" readonly style="display: none; width: 50px;"></td>
+            <td><input type="text" id="feeGe" name="fee_ge" readonly style="display: none; width: 50px;"></td>
+        </tr>
     </form>
 </div>
 
