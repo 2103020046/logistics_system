@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
 	'NAME': 'logistics_system',
         'USER': 'logistics_user',
-        'PASSWORD': 'ZJ297503.com!',
+        'PASSWORD': '**********',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
