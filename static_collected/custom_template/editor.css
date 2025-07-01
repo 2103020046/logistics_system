@@ -200,9 +200,8 @@ body {
     display: none;
 }
 
-
-
 /* 在文件末尾添加特定字段样式 */
+/* 确保编辑器中的样式与打印样式一致 */
 .field[data-name="托运公司名称"] {
     width: 200px !important;
     font-size: 24px !important;
@@ -215,4 +214,31 @@ body {
 .field[data-name="到站地址"] {
     width: 260px !important;
     font-size: 20px !important;
+}
+
+
+/* 在文件末尾添加打印样式 */
+/* 修改打印样式部分 */
+@media print {
+    .field {
+        border: none !important;
+        outline: none !important;
+    }
+    
+    /* 添加这个新规则确保所有样式都被重置 */
+    * {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* 在文件末尾添加选中字段的样式 */
+.selected-field {
+    outline: 2px solid #007bff;
+}
+
+@media print {
+    .selected-field {
+        outline: none !important;
+    }
 }

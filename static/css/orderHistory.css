@@ -167,6 +167,8 @@
 .search-container .col-auto {
     padding-left: 5px;
     padding-right: 5px;
+    flex: 1 0 0%; /* 使列均匀分布 */
+    min-width: 120px; /* 设置最小宽度 */
 }
 
 /* 统一输入框样式 */

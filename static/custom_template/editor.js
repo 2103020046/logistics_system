@@ -1,3 +1,8 @@
+// 在文件顶部添加变量声明
+let selectedField = null;
+const MOVE_STEP = 5; // 默认移动步长
+const FAST_MOVE_STEP = 10; // 按住Shift时的移动步长
+
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('canvas');
     const templateContentInput = document.createElement('textarea');
@@ -255,7 +260,7 @@ function createFieldElement(fieldName, x, y) {
         fieldElement.style.width = '200px';
         fieldElement.style.fontSize = '24px';
     } else if (['发货人', '发货人地址', '收货人地址', '发站地址', '到站地址'].includes(fieldName)) {
-        fieldElement.style.width = '260px';
+        fieldElement.style.width = '270px';
     } else {
         fieldElement.style.width = '180px';
         fieldElement.style.fontSize = '20px';
@@ -289,9 +294,80 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 初始化拖拽字段等其他逻辑...
-    initializeDraggableFields();
+    
+    // 新增字段选中事件
+    canvas.addEventListener('click', function(e) {
+        if (e.target.classList.contains('field')) {
+            selectField(e.target);
+        } else {
+            deselectField();
+        }
+    });
 
-    // 其他逻辑保持不变...
+    // 新增键盘事件监听
+    document.addEventListener('keydown', handleKeyDown);
 });
 
+// 修改选择字段函数
+function selectField(field) {
+    deselectField();
+    selectedField = field;
+    field.classList.add('selected-field'); // 改为使用CSS类
+    field.style.cursor = 'move';
+}
+
+// 修改取消选择函数
+function deselectField() {
+    if (selectedField) {
+        selectedField.classList.remove('selected-field'); // 移除CSS类
+        selectedField.style.cursor = 'grab';
+    }
+    selectedField = null;
+}
+
+// 新增键盘处理函数
+function handleKeyDown(e) {
+    if (!selectedField) return;
+
+    const step = e.shiftKey ? FAST_MOVE_STEP : MOVE_STEP;
+    const rect = canvas.getBoundingClientRect();
+    
+    let top = parseInt(selectedField.style.top) || 0;
+    let left = parseInt(selectedField.style.left) || 0;
+
+    switch(e.key) {
+        case 'ArrowUp':
+            top = Math.max(0, top - step);
+            break;
+        case 'ArrowDown':
+            top = Math.min(rect.height - selectedField.offsetHeight, top + step);
+            break;
+        case 'ArrowLeft':
+            left = Math.max(0, left - step);
+            break;
+        case 'ArrowRight':
+            left = Math.min(rect.width - selectedField.offsetWidth, left + step);
+            break;
+        case 'Escape':
+            deselectField();
+            return;
+        default:
+            return;
+    }
+
+    selectedField.style.top = `${top}px`;
+    selectedField.style.left = `${left}px`;
+    updateTemplateContentAndFieldPositions();
+    e.preventDefault(); // 阻止默认滚动行为
+}
+
+// 在makeFieldDraggable函数中添加点击选择
+function makeFieldDraggable(field) {
+    // ...原有代码...
+    
+    // 新增点击选择功能
+    field.addEventListener('click', function(e) {
+        e.stopPropagation(); // 阻止事件冒泡到canvas
+        selectField(field);
+    });
+}

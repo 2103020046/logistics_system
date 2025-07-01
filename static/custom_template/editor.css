@@ -71,7 +71,7 @@ body {
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     width: 100%; /* 设置宽度为907像素 */
-    height: 527px; /* 设置高度为527像素 */
+    height: 650px; /* 设置高度为527像素 */
     position: relative;
     border-radius: 8px;
     overflow: hidden;
@@ -214,4 +214,31 @@ body {
 .field[data-name="到站地址"] {
     width: 260px !important;
     font-size: 20px !important;
+}
+
+
+/* 在文件末尾添加打印样式 */
+/* 修改打印样式部分 */
+@media print {
+    .field {
+        border: none !important;
+        outline: none !important;
+    }
+    
+    /* 添加这个新规则确保所有样式都被重置 */
+    * {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* 在文件末尾添加选中字段的样式 */
+.selected-field {
+    outline: 2px solid #007bff;
+}
+
+@media print {
+    .selected-field {
+        outline: none !important;
+    }
 }

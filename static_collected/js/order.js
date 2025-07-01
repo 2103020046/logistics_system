@@ -42,8 +42,8 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
         const quantity = parseFloat(cells[2].querySelector('input').value) || 0;
         const weight = parseFloat(cells[3].querySelector('input').value) || 0;
         const volume = parseFloat(cells[4].querySelector('input').value) || 0;
-        const freight = parseFloat(cells[5].querySelector('input').value) || 0;
-        const remarks = cells[6].querySelector('input').value;
+        const freight = parseFloat(cells[9].querySelector('input').value) || 0;
+        const remarks = cells[10].querySelector('input').value;
 
         formData.set(`items[${index}][productName]`, productName);
         formData.set(`items[${index}][packageType]`, packageType);
@@ -66,7 +66,18 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
                 const orderId = data.orderId;
                 return fetch(`/api/orders/${orderId}`, {method: 'GET'});
             } else {
-                alert(`提交订单失败：${data.message}`);
+                // 将错误消息转换为中文
+                const errorMessages = {
+                    'invalid_data': '提交的数据不完整或格式错误',
+                    'server_error': '服务器处理请求时出错',
+                    'duplicate_order': '订单号已存在',
+                    'invalid_company': '公司名称无效',
+                    'invalid_items': '货物信息不完整',
+                    'django.db.utils.IntegrityError': '订单号已存在，请检查运单号是否重复'
+                };
+                const chineseMessage = errorMessages[data.message] || 
+                                    (data.message.includes('Duplicate entry') ? '订单号已存在，请检查运单号是否重复' : data.message);
+                alert(`提交订单失败：${chineseMessage}`);
             }
         })
         .catch(error => {
@@ -159,7 +170,7 @@ document.getElementById('previewButton').addEventListener('click', function () {
     
     // 将表单数据转换为对象，并转换为下划线格式
     formData.forEach((value, key) => {
-        // 将驼峰命名转换为下划线命名
+        // 将驼峰命名转换为下划线命名，如：companyName -> company_name
         const underscoreKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
         
         // 处理数组形式的字段名 (如 items[0][productName])
@@ -190,6 +201,7 @@ document.getElementById('previewButton').addEventListener('click', function () {
             let previewHtml = template.content;
 
             // 定义字段映射关系
+            // 在fieldMapping中添加新增字段
             const fieldMapping = {
                 '托运公司名称': data.company_name || '',
                 '日期': data.date || '',
@@ -213,6 +225,11 @@ document.getElementById('previewButton').addEventListener('click', function () {
                 '货物价值': data.items?.[0]?.goods_value || '',
                 '运费': data.items?.[0]?.freight || '',
                 '备注': data.items?.[0]?.remarks || '',
+                '万': data.fee_wan || '',
+                '仟': data.fee_qian || '',
+                '佰': data.fee_bai || '',
+                '拾': data.fee_shi || '',
+                '个': data.fee_ge || '',
                 '合计费用': data.total_fee || '',
                 '付款方式': data.payment_method || '',
                 '交货方式': data.delivery_method || '',
@@ -263,10 +280,11 @@ document.getElementById('previewButton').addEventListener('click', function () {
                         /* 添加特定字段的打印样式 */
                         .field[data-name="托运公司名称"] {
                             width: 200px !important;
-                            font-size: 30px !important;
+                            font-size: 36px !important;
                         }
                         
                         .field[data-name="发货人"],
+			.field[data-name="收货人"],
                         .field[data-name="发货人地址"],
                         .field[data-name="收货人地址"],
                         .field[data-name="发站地址"],
@@ -325,8 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 在DOMContentLoaded事件中添加运单号生成逻辑
 document.addEventListener('DOMContentLoaded', function() {
     // 自动设置当前日期
-    const dateInput = document.getElementById('date');
-    const orderNoInput = document.getElementById('orderNo');
+    const dateInput = document.getElementById('date');    const orderNoInput = document.getElementById('orderNo');
     
     if (dateInput && orderNoInput) {
         const today = new Date();
@@ -348,4 +365,185 @@ document.addEventListener('DOMContentLoaded', function() {
                 orderNoInput.placeholder = orderNoInput.value;
             });
     }
+});
+
+// 在文件顶部添加数字转中文大写的函数
+// 修改numberToChinese函数
+function numberToChinese(num) {
+    const chineseNums = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+    const units = ['', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿'];
+    
+    num = parseInt(num) || 0;
+    if (num === 0) return '零';
+    
+    const strNum = String(num);
+    let result = '';
+    let zeroCount = 0;
+    
+    for (let i = 0; i < strNum.length; i++) {
+        const digit = parseInt(strNum[i]);
+        const unitIndex = strNum.length - 1 - i;
+        const unit = units[unitIndex];
+        
+        if (digit === 0) {
+            zeroCount++;
+        } else {
+            // 处理连续的零
+            if (zeroCount > 0) {
+                result += '零';
+                zeroCount = 0;
+            }
+            result += chineseNums[digit] + unit;
+        }
+    }
+    
+    // 去除末尾的零
+    result = result.replace(/零+$/, '');
+    
+    // 处理拆分后的数字
+    const digits = String(num).padStart(5, '0').split('').reverse();
+    const splitResult = {
+        '万': digits[4] !== '0' ? chineseNums[digits[4]] : '',
+        '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '零',
+        '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '零',
+        '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '零',
+        '个': digits[0] !== '0' ? chineseNums[digits[0]] : '零'
+    };
+    
+    return {split: splitResult, full: result || '零'};
+}
+
+// 修改事件监听逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    const totalFeeInput = document.getElementById('totalFee');
+    const feeDescriptionInput = document.getElementById('feeDescription');
+    
+    if (totalFeeInput && feeDescriptionInput) {
+        // 确保合计金额输入框是只读的
+        feeDescriptionInput.readOnly = true;
+        
+        totalFeeInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const num = parseFloat(value) || 0;
+            const chinese = numberToChinese(num);
+            
+            // 更新各个输入框
+            document.getElementById('feeWan').value = chinese.split['万'];
+            document.getElementById('feeQian').value = chinese.split['仟'];
+            document.getElementById('feeBai').value = chinese.split['佰'];
+            document.getElementById('feeShi').value = chinese.split['拾'];
+            document.getElementById('feeGe').value = chinese.split['个'];
+            feeDescriptionInput.value = chinese.full;
+        });
+    }
+});
+
+// 在文件顶部添加获取当前时间的函数
+function getCurrentTime() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+// 在DOMContentLoaded事件监听器中添加打印标签功能
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取打印标签按钮和模态框元素
+    const printLabelBtn = document.getElementById('printLabelBtn');
+    const labelModal = document.getElementById('labelModal');
+    const closeBtn = document.querySelector('.close');
+    const cancelPrintBtn = document.getElementById('cancelPrint');
+    const printNowBtn = document.getElementById('printLabelNow');
+    
+    // 打开模态框
+    printLabelBtn.addEventListener('click', function() {
+        // 获取表单数据填充到标签内容中
+        const companyName = document.querySelector('.title-underline').value;
+        const arrivalStation = document.getElementById('arrivalStation').value;
+        const receiverName = document.getElementById('receiverName').value;
+        
+        const labelContent = document.getElementById('labelContent');
+        labelContent.value = `发货公司: ${companyName}\n到站: ${arrivalStation}\n收货人: ${receiverName}\n时间: ${getCurrentTime()}`;
+        
+        labelModal.style.display = 'block';
+    });
+    
+    // 关闭模态框
+    closeBtn.addEventListener('click', function() {
+        labelModal.style.display = 'none';
+    });
+    
+    cancelPrintBtn.addEventListener('click', function() {
+        labelModal.style.display = 'none';
+    });
+    
+    // 点击打印按钮
+    // 修改打印逻辑
+    printNowBtn.addEventListener('click', function() {
+        // 收集标签内容
+        const labelLines = Array.from(document.querySelectorAll('.label-line')).map(line => {
+            const label = line.textContent.replace(/:.*/, ''); // 获取标签名
+            const value = line.querySelector('.label-input').value;
+            return `${label}: ${value}`;
+        }).join('\n');
+        
+        const copies = parseInt(document.getElementById('labelCopies').value) || 1;
+        
+        // 创建打印内容
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>打印标签</title>
+                <style>
+                    @page {
+                        size: 100mm 100mm;
+                        margin: 0;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        font-size: 24pt;
+                        line-height: 1.5;
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .label-content {
+                        width: 100%;
+                        text-align: center;
+                        margin: auto;
+                    }
+                </style>
+            </head>
+            <body>
+                ${Array(copies).fill(`
+                <div class="label-content">
+                    ${labelLines.replace(/\n/g, '<br>')}
+                </div>
+                `).join('')}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            window.close();
+                        }, 200);
+                    };
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        
+        labelModal.style.display = 'none';
+    });
+    
+    // 点击模态框外部关闭
+    window.addEventListener('click', function(event) {
+        if (event.target === labelModal) {
+            labelModal.style.display = 'none';
+        }
+    });
 });

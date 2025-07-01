@@ -9,4 +9,5 @@ urlpatterns = [
     path('delete/<int:template_id>/', views.delete_template, name='delete_template'),
     path('api/templates/', views.template_list_api, name='template_list_api'),
     path('api/templates/<int:template_id>/', views.template_detail_api, name='template_detail_api'),
+    path('copy/<int:template_id>/', views.copy_template, name='copy_template'),
 ]

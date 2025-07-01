@@ -108,7 +108,7 @@ def create_order(request):
         except Exception as e:
             logger.error(f"Unexpected error creating order: {str(e)}", exc_info=True)
             return JsonResponse(
-                {'status': 'error', 'message': f'{str(e)}, An unexpected error occurred. Please try again later.'},
+                {'status': 'error', 'message': f'{str(e)}, 表单信息错误，请检查表单信息是否正确填写后重新提交.'},
                 status=500)
 
 
@@ -135,6 +135,7 @@ def orders(request):
 @login_required
 def order_history(request):
     # 获取查询参数
+    sender = request.GET.get('sender', '')
     receiver = request.GET.get('receiver', '')
     order_number = request.GET.get('order_number', '')
     start_date = request.GET.get('start_date', '')
@@ -143,6 +144,8 @@ def order_history(request):
     # 构建查询条件
     queryset = Order.objects.filter(user=request.user)
     
+    if sender:
+        queryset = queryset.filter(sender__icontains=sender)
     if receiver:
         queryset = queryset.filter(receiver__icontains=receiver)
     if order_number:
@@ -156,23 +159,32 @@ def order_history(request):
     # 分页设置
     paginator = Paginator(queryset, 10)
     page = request.GET.get('page')
-
+    
     try:
         orders_page = paginator.page(page)
     except PageNotAnInteger:
         orders_page = paginator.page(1)
     except EmptyPage:
         orders_page = paginator.page(paginator.num_pages)
-
+    
+    # 计算页码范围
+    page_range = paginator.get_elided_page_range(
+        number=orders_page.number,
+        on_each_side=4,  # 每边显示4页
+        on_ends=1        # 首尾各显示1页
+    )
+    
     # 保留搜索参数在分页链接中
     params = request.GET.copy()
     if 'page' in params:
         del params['page']
     orders_page.query_params = params.urlencode()
-
+    
     return render(request, 'order_history.html', {
         'orders': orders_page,
+        'page_range': page_range,  # 添加分页范围
         'search_params': {
+            'sender': sender,
             'receiver': receiver,
             'order_number': order_number,
             'start_date': start_date,
@@ -245,6 +257,8 @@ def edit_order(request, order_id):
     }
     if request.method == 'POST':
         # 更新订单基本信息
+        order.order_number = request.POST.get('orderNo')
+        order.company_name = request.POST.get('companyName')
         order.sender = request.POST.get('senderName')
         order.receiver = request.POST.get('receiverName')
         order.sender_phone = request.POST.get('senderPhone')
@@ -264,7 +278,7 @@ def edit_order(request, order_id):
         order.arrival_station_phone = request.POST.get('arrivalStationPhone')
         order.transit_fee = request.POST.get('transitFee')
         order.date = request.POST.get('date')
-        order.departure_station = request.POST.get('departureStation')
+        order.carrier_address = request.POST.get('carrierAddress')
         order.transport_method = request.POST.get('transportMethod')
         order.delivery_method = request.POST.get('deliveryMethod')
         order.sender_sign = request.POST.get('senderSign')
@@ -415,7 +429,7 @@ def export_orders(request):
             total_quantity = 0
             total_weight = 0
             total_volume = 0
-            total_freight = 0
+            total_money = 0
 
             # 填充数据
             for order in orders:
@@ -432,7 +446,7 @@ def export_orders(request):
                         item.volume,
                         item.packaging_fee,
                         "",  # 短途列留空
-                        item.freight,
+                        order.total_freight,
                         order.payment_method,
                         order.receiver_address
                     ]
@@ -442,7 +456,7 @@ def export_orders(request):
                     total_quantity += item.quantity
                     total_weight += item.weight
                     total_volume += item.volume
-                    total_freight += item.freight
+                    total_money += order.total_freight
 
             # 添加合计行
             if orders:  # 只有当有订单时才添加合计行
@@ -452,7 +466,7 @@ def export_orders(request):
                     total_weight, 
                     total_volume, 
                     "", "", 
-                    total_freight, 
+                    total_money, 
                     "", ""
                 ])
             

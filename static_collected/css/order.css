@@ -52,24 +52,44 @@
 
 .add-row-btn,
 #cancel-row-btn,
-    /* 提交订单按钮的样式 */
-button[type="submit"] {
+    /* 修改提交订单按钮和打印标签按钮的样式 */
+button[type="submit"], 
+#printLabelBtn {
     background-color: #007BFF;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px; /* 确保与上方元素有足够的间距 */
+    margin-top: 10px;
     float: right;
-    margin-right: 10px; /* 设置右侧间距 */
+    margin-right: 10px;
+    font-size: 16px; /* 增大字体大小 */
+}
+
+button[type="submit"]:hover,
+#printLabelBtn:hover {
+    background-color: #0056b3;
+}
+
+/* 调整预览按钮的样式 */
+#previewButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    float: right;
+    margin-right: 10px;
+    font-size: 16px; /* 增大字体大小 */
 }
 
 .add-row-btn:hover,
 #cancel-row-btn:hover {
     background-color: #45a049;
 }
-
 
 /* 输入字段样式 */
 input[type="text"],
@@ -136,14 +156,27 @@ h2 {
     /* 略小于100%避免因边框导致溢出 */
 }
 
+/* 修改返回按钮样式 */
 .back-button {
-    position: absolute;
-    top: 20px; /* 根据实际情况调整 */
-    left: 20px; /* 根据实际情况调整 */
-    background-color: transparent;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    padding: 10px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 14px;
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+/* 移除原来的定位样式 */
+.back-button .arrow-icon {
+    display: none;
 }
 
 .back-button .arrow-icon {
@@ -181,9 +214,9 @@ h2 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px; /* 确保与上方元素有足够的间距 */
+    margin-top: 10px;
     float: right;
-    margin-right: 20px; /* 设置右侧间距 */
+    margin-right: 20px;
 }
 
 #previewButton:hover {
@@ -203,5 +236,125 @@ h2 {
 .goodsTable th[required],
 .additionalTable th[required] {
     position: relative;
+}
+
+
+/* 确保隐藏行不占用空间 */
+tr[style="display: none;"] {
+    display: none !important;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+/* 隐藏行中的输入框样式 */
+tr[style="display: none;"] input {
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    visibility: hidden;
+}
+
+/* 打印标签模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* 标签打印样式 */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #labelPrintArea, #labelPrintArea * {
+        visibility: visible;
+    }
+    #labelPrintArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100mm;
+        height: 100mm;
+        border: 1px solid #000;
+        padding: 5mm;
+        box-sizing: border-box;
+        font-size: 30pt;
+        line-height: 1.5;
+    }
+}
+
+
+/* 标签编辑器样式 */
+.label-content-editor {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+.label-line {
+    margin-bottom: 8px;
+}
+
+.label-input {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 70%;
+    font-size: 14px;
+}
+
+/* 打印时隐藏输入框 */
+@media print {
+    .label-input {
+        border: none;
+        background: transparent;
+        padding: 0;
+        width: auto;
+    }
+    .label-content-editor {
+        border: none;
+        padding: 0;
+        background: transparent;
+    }
 }
 

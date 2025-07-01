@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>历史订单</title>
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/orderHistory.css" rel="stylesheet">
+</head>
+<body>
+<!-- 在容器顶部添加标题 -->
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">历史订单</h2>
+    </div>
+
+    <!-- 搜索容器 -->
+    <!-- 修改搜索容器部分 -->
+    <div class="search-container mb-4 p-3 bg-light rounded">
+        <form method="get" class="row g-2 align-items-center" style="margin: 0 -5px;">
+            <div class="col">
+                <input type="text" name="sender" class="form-control" placeholder="发货方" value="{{ request.GET.sender }}">
+            </div>
+	    <div class="col">
+                <input type="text" name="receiver" class="form-control" placeholder="收货方" value="{{ request.GET.receiver }}">
+            </div>
+            <div class="col">
+                <input type="text" name="order_number" class="form-control" placeholder="运单号" value="{{ request.GET.order_number }}">
+            </div>
+            <div class="col">
+                <input type="date" name="start_date" class="form-control date-picker" placeholder="开始日期" value="{{ request.GET.start_date }}">
+            </div>
+            <div class="col">
+                <input type="date" name="end_date" class="form-control date-picker" placeholder="结束日期" value="{{ request.GET.end_date }}">
+            </div>
+            <div class="col-auto">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1">查询</button>
+                    <a href="?page=1" class="btn btn-secondary flex-grow-1">重置</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-hover">
+        <!-- 在表头添加勾选框列 -->
+        <thead class="table-light">
+            <tr>
+                <th><input type="checkbox" id="selectAll"></th>
+                <th>日期</th>
+                <th>运单号</th>
+                <th>发货方</th>
+                <th>收货方</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <!-- 在表格行中添加勾选框 -->
+        <tbody>
+            {% if orders %}
+                {% for order in orders %}
+                    <tr>
+                        <td><input type="checkbox" class="order-checkbox" data-order-id="{{ order.id }}"></td>
+                        <td>{{ order.date }}</td>
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.sender }}</td>
+                        <td>{{ order.receiver }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="openOrderModal({{ order.id }})">查看</button>
+                            <a href="{% url 'edit_order' order.id %}" class="btn btn-sm btn-warning">编辑</a>
+                            <button class="btn btn-sm btn-danger" onclick="deleteOrder({{ order.id }})">删除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+        <!-- 在文件底部，</div>容器结束标签前添加 -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/" class="btn btn-secondary">返回首页</a>
+            <!-- 保持原有的导出按钮 -->
+            <button id="exportSelected" class="btn btn-success">导出选中订单</button>
+        </div>
+    </table>
+
+    <!-- 分页导航 -->
+    <!-- 修改分页部分 -->
+    {% if orders and orders.paginator.count >= 10 %}
+        <div class="pagination-container">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if orders.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.previous_page_number }}&{{ orders.query_params }}" tabindex="-1">上一页</a>
+                        </li>
+                    {% endif %}
+                    {% for i in page_range %}
+                        {% if i == paginator.ELLIPSIS %}
+                            <li class="page-item disabled">
+                                <span class="page-link">{{ i }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item {% if orders.number == i %}active{% endif %}">
+                                <a class="page-link" href="?page={{ i }}&{{ orders.query_params }}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if orders.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.next_page_number }}&{{ orders.query_params }}">下一页</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+
+<!-- 模态框 -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="modalClose">&times;</span>
+        <h2>订单详情</h2>
+        <div id="orderDetails">
+            <!-- 订单基本信息将通过JavaScript动态插入 -->
+        </div>
+        <h3>商品信息</h3>
+        <table id="goodsTable">
+            <thead>
+            <tr>
+                <th>品名</th>
+                <th>包装</th>
+                <th>件数</th>
+                <th>重量(kg)</th>
+                <th>体积(m³)</th>
+                <th>送(提)货费</th>
+                <th>保险费</th>
+                <th>包装费</th>
+                <th>货物价值</th>
+                <th>运费(元)</th>
+                <th>备注</th>
+            </tr>
+            </thead>
+            <tbody id="itemsTbody">
+            <!-- 商品信息将通过JavaScript动态插入 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="/static/jquery/jquery-3.7.1.min.js"></script>
+<script src="/static/bootstrap5/bootstrap.min.js"></script>
+<script>
+    function openOrderModal(orderId) {
+        const orderDetailsDiv = document.getElementById('orderDetails');
+        const itemsTbody = document.getElementById('itemsTbody');
+
+        // 显示加载指示器
+        orderDetailsDiv.innerHTML = '<p>正在加载订单详情...</p>';
+        itemsTbody.innerHTML = '';
+
+        // AJAX请求获取订单数据
+        fetch(`/api/orders/${orderId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 处理订单基本信息
+                orderDetailsDiv.innerHTML = `
+<table border="1" cellpadding="10">
+    <tbody>
+        <tr>
+            <td>
+                <p><strong>运单号:</strong> ${data.order_number}</p>
+                <p><strong>发站:</strong> ${data.departure_station}</p>
+                <p><strong>发货方:</strong> ${data.sender}</p>
+                <p><strong>发货方电话:</strong> ${data.sender_phone}</p>
+                <p><strong>发货方地址:</strong> ${data.sender_address}</p>
+                <p><strong>发站地址:</strong> ${data.carrier_address}</p>
+                <p><strong>发站查询电话:</strong> ${data.departure_station_phone}</p>
+            </td>
+            <td>
+                <p><strong>货号:</strong> ${data.product_code}</p>
+                <p><strong>到站:</strong> ${data.arrival_station}</p>
+                <p><strong>收货方:</strong> ${data.receiver}</p>
+                <p><strong>收货方电话:</strong> ${data.receiver_phone}</p>
+                <p><strong>收货方地址:</strong> ${data.receiver_address}</p>
+                <p><strong>到站地址:</strong> ${data.arrival_address}</p>
+                <p><strong>到站查询电话:</strong> ${data.arrival_station_phone}</p>
+            </td>
+            <td>
+                <p><strong>日期:</strong> ${data.date}</p>
+                <p><strong>总运费:</strong> ${data.total_freight}</p>
+                <p><strong>付款方式:</strong> ${data.payment_method}</p>
+                <p><strong>运输方式:</strong> ${data.transport_method}</p>
+                <p><strong>交货方式:</strong> ${data.delivery_method}</p>
+                <p><strong>其他支出:</strong> ${data.other_expenses}</p>
+                <p><strong>费用说明:</strong> ${data.expense_details}</p>
+            </td>
+            <td>
+                <p><strong>承运商:</strong> ${data.carrier}</p>                
+                <p><strong>客户单号:</strong> ${data.customer_order_no}</p>
+                <p><strong>回单要求:</strong> ${data.return_requirement}</p>
+                <p><strong>发货人签名:</strong> ${data.sender_sign}</p>
+                <p><strong>收货人签名:</strong> ${data.receiver_sign}</p>
+                <p><strong>身份证号:</strong> ${data.id_card}</p>
+                <p><strong>制单人:</strong> ${data.order_maker}</p>
+            </td>
+        </tr>
+    </tbody>
+</table>`;
+
+                // 处理商品信息
+                itemsTbody.innerHTML = ''; // 清空之前的数据
+                data.items.forEach(item => {
+                    itemsTbody.innerHTML += `
+                    <tr>
+                        <td>${item.item_name}</td>
+                        <td>${item.package_type}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.weight}</td>
+                        <td>${item.volume}</td>
+                        <td>${item.delivery_charge}</td>
+                        <td>${item.insurance_fee}</td>
+                        <td>${item.packaging_fee}</td>
+                        <td>${item.goods_value}</td>
+                        <td>${item.freight}</td>
+                        <td>${item.remarks}</td>
+                    </tr>
+                `;
+                });
+
+                // 显示模态框
+                document.getElementById('orderModal').style.display = "block";
+            })
+            .catch(error => {
+                console.error('Error fetching order data:', error);
+                orderDetailsDiv.innerHTML = '<p>无法加载订单详情。</p>';
+            });
+    }
+
+    // 关闭模态框
+    document.getElementById('modalClose').onclick = function () {
+        document.getElementById('orderModal').style.display = "none";
+    }
+
+    // 点击模态框以外的地方也关闭模态框
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('orderModal')) {
+            document.getElementById('orderModal').style.display = "none";
+        }
+    }
+
+    function deleteOrder(orderId) {
+        if (confirm('确定要删除这个订单吗？')) {
+            fetch(`/orders/delete/${orderId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

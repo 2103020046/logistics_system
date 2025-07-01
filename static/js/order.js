@@ -410,3 +410,113 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// 在文件顶部添加获取当前时间的函数
+function getCurrentTime() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+// 在DOMContentLoaded事件监听器中添加打印标签功能
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取打印标签按钮和模态框元素
+    const printLabelBtn = document.getElementById('printLabelBtn');
+    const labelModal = document.getElementById('labelModal');
+    const closeBtn = document.querySelector('.close');
+    const cancelPrintBtn = document.getElementById('cancelPrint');
+    const printNowBtn = document.getElementById('printLabelNow');
+    
+    // 打开模态框
+    printLabelBtn.addEventListener('click', function() {
+        // 获取表单数据填充到标签内容中
+        const companyName = document.querySelector('.title-underline').value;
+        const arrivalStation = document.getElementById('arrivalStation').value;
+        const receiverName = document.getElementById('receiverName').value;
+        
+        const labelContent = document.getElementById('labelContent');
+        labelContent.value = `发货公司: ${companyName}\n到站: ${arrivalStation}\n收货人: ${receiverName}\n时间: ${getCurrentTime()}`;
+        
+        labelModal.style.display = 'block';
+    });
+    
+    // 关闭模态框
+    closeBtn.addEventListener('click', function() {
+        labelModal.style.display = 'none';
+    });
+    
+    cancelPrintBtn.addEventListener('click', function() {
+        labelModal.style.display = 'none';
+    });
+    
+    // 点击打印按钮
+    // 修改打印逻辑
+    printNowBtn.addEventListener('click', function() {
+        // 收集标签内容
+        const labelLines = Array.from(document.querySelectorAll('.label-line')).map(line => {
+            const label = line.textContent.replace(/:.*/, ''); // 获取标签名
+            const value = line.querySelector('.label-input').value;
+            return `${label}: ${value}`;
+        }).join('\n');
+        
+        const copies = parseInt(document.getElementById('labelCopies').value) || 1;
+        
+        // 创建打印内容
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>打印标签</title>
+                <style>
+                    @page {
+                        size: 100mm 100mm;
+                        margin: 0;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        font-size: 24pt;
+                        line-height: 1.5;
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .label-content {
+                        width: 100%;
+                        text-align: center;
+                        margin: auto;
+                    }
+                </style>
+            </head>
+            <body>
+                ${Array(copies).fill(`
+                <div class="label-content">
+                    ${labelLines.replace(/\n/g, '<br>')}
+                </div>
+                `).join('')}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            window.close();
+                        }, 200);
+                    };
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        
+        labelModal.style.display = 'none';
+    });
+    
+    // 点击模态框外部关闭
+    window.addEventListener('click', function(event) {
+        if (event.target === labelModal) {
+            labelModal.style.display = 'none';
+        }
+    });
+});

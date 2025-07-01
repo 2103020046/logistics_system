@@ -167,6 +167,8 @@
 .search-container .col-auto {
     padding-left: 5px;
     padding-right: 5px;
+    flex: 1 0 0%; /* 使列均匀分布 */
+    min-width: 120px; /* 设置最小宽度 */
 }
 
 /* 统一输入框样式 */
@@ -252,12 +254,53 @@
     margin-left: auto;
 }
 
+
+/* 添加在文件末尾 */
 .btn-secondary {
     background-color: #6c757d;
     color: white;
 }
-        
+
 .btn-secondary:hover {
     background-color: #5a6268;
     color: white;
+}
+
+
+/* 分页样式 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.pagination {
+    display: inline-flex;
+    margin: 0 auto;
+}
+
+.page-item {
+    margin: 0 2px;
+}
+
+.page-link {
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    padding: 6px 12px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
 }

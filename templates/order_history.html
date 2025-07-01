@@ -18,6 +18,9 @@
     <div class="search-container mb-4 p-3 bg-light rounded">
         <form method="get" class="row g-2 align-items-center" style="margin: 0 -5px;">
             <div class="col">
+                <input type="text" name="sender" class="form-control" placeholder="发货方" value="{{ request.GET.sender }}">
+            </div>
+	    <div class="col">
                 <input type="text" name="receiver" class="form-control" placeholder="收货方" value="{{ request.GET.receiver }}">
             </div>
             <div class="col">
@@ -80,25 +83,33 @@
     <!-- 分页导航 -->
     <!-- 修改分页部分 -->
     {% if orders and orders.paginator.count >= 10 %}
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                {% if orders.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ orders.previous_page_number }}&{{ orders.query_params }}" tabindex="-1">上一页</a>
-                    </li>
-                {% endif %}
-                {% for i in orders.paginator.page_range %}
-                    <li class="page-item {% if orders.number == i %}active{% endif %}">
-                        <a class="page-link" href="?page={{ i }}&{{ orders.query_params }}">{{ i }}</a>
-                    </li>
-                {% endfor %}
-                {% if orders.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ orders.next_page_number }}&{{ orders.query_params }}">下一页</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+        <div class="pagination-container">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    {% if orders.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.previous_page_number }}&{{ orders.query_params }}" tabindex="-1">上一页</a>
+                        </li>
+                    {% endif %}
+                    {% for i in page_range %}
+                        {% if i == paginator.ELLIPSIS %}
+                            <li class="page-item disabled">
+                                <span class="page-link">{{ i }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item {% if orders.number == i %}active{% endif %}">
+                                <a class="page-link" href="?page={{ i }}&{{ orders.query_params }}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if orders.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ orders.next_page_number }}&{{ orders.query_params }}">下一页</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     {% endif %}
 </div>
 

@@ -18,6 +18,7 @@
                 <h2>物流公司托运单</h2>
             </div>
         </div>
+	{% csrf_token %}
         <table class="orderTable">
             <!-- 修改表头部分，在必填项标签中添加<span class="required">*</span> -->
             <tr>
@@ -80,7 +81,7 @@
                 <td><input type="text" name="items[0][packageType]" required></td>
                 <td><input type="number" step="1" name="items[0][quantity]" value="1"></td>
                 <td><input type="number" step="1" name="items[0][weight]" value="0"></td>
-                <td><input type="number" step="0.1" name="items[0][volume]" value="0.0"></td>
+                <td><input type="number" step="0.001" name="items[0][volume]" value="0.0"></td>
                 <td><input type="number" step="1" name="items[0][deliveryCharge]" value="0"></td>
                 <td><input type="number" step="1" name="items[0][insuranceFee]" value="0"></td>
                 <td><input type="number" step="1" name="items[0][packagingFee]" value="0"></td>
@@ -106,6 +107,7 @@
                         <option value="提付">提付</option>
                         <option value="现付">现付</option>
                         <option value="月结">月结</option>
+			<option value="回单付">回单付</option>
                     </select>
                 </td>
                 <th>交货方式<span class="required">*</span></th>
@@ -121,8 +123,8 @@
                 <td><input type="text" id="returnRequirement" name="returnRequirement"></td>
                 <th>其他支出</th>
                 <td><input type="text" id="otherExpenses" name="otherExpenses"></td>
-                <th>客户单号</th>
-                <td><input type="number" id="customerOrderNo" name="customerOrderNo" required></td>
+                <th>客户单号<span class="required">*</span></th>
+                <td><input type="text" id="customerOrderNo" name="customerOrderNo" required></td>
                 <th>承运商</th>
                 <td><input type="text" id="carrier" name="carrier"></td>
             </tr>
@@ -146,15 +148,45 @@
                 <th>到站查询电话<span class="required">*</span></th>
                 <td colspan="3"><input type="text" id="arrivalStationPhone" name="arrivalStationPhone" value="13629938726"></td>
                 <th>到站地址<span class="required">*</span></th>
-                <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress" value="新疆乌鲁木齐"></td>
+                <td colspan="3"><input type="text" id="arrivalAddress" name="arrivalAddress" value="霍尔果斯"></td>
             </tr>
         </table>
         <!-- 修改返回按钮 -->
-        <button type="button" id="backButton" class="back-button">返回首页</button>
-        <button type="button" id="previewButton" style="float:right; margin-right: 10px;">预览</button>
-        <!-- 修改标题部分 -->
-        <button type="submit" style="float:right;">提交订单</button>
-        {#        <button type="button" class="preview" onclick="previewOrder()" style="display: none">预览订单</button>#}
+        <!-- 修改按钮部分 -->
+        <div style="clear: both; text-align: right; margin-top: 20px;">
+            <button type="button" id="backButton" class="back-button">返回首页</button>
+            <button type="button" id="previewButton">预览</button>
+            <button type="button" id="printLabelBtn">打印标签</button>
+            <button type="submit">提交订单</button>
+        </div>
+        
+        <!-- 在文件底部，</form>标签后添加打印标签的模态框 -->
+        <div id="labelModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>标签打印设置</h3>
+                <form id="labelForm">
+                    <!-- 修改标签内容部分 -->
+                    <div class="form-group">
+                        <label for="labelContent">标签内容:</label>
+                        <div id="labelContent" class="label-content-editor">
+                            <div class="label-line" data-field="companyName">发货公司: <input type="text" class="label-input" value="{{ companyName }}"></div>
+                            <div class="label-line" data-field="arrivalStation">到站: <input type="text" class="label-input" value="{{ arrivalStation }}"></div>
+                            <div class="label-line" data-field="receiverName">收货人: <input type="text" class="label-input" value="{{ receiverName }}"></div>
+                            <div class="label-line" data-field="currentTime">时间: <input type="text" class="label-input" value="{{ currentTime }}"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="labelCopies">打印份数:</label>
+                        <input type="number" id="labelCopies" min="1" value="1">
+                    </div>
+                    <div class="button-group">
+                        <button type="button" id="printLabelNow">立即打印</button>
+                        <button type="button" id="cancelPrint">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <!-- 模板选择区域 -->
         <div>
             <label for="templateSelector">选择模板：</label>

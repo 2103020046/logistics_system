@@ -18,7 +18,7 @@ class Order(models.Model):
     receiver_address = models.TextField(verbose_name='收货详细地址', default='Default Carrier')
 
     # 其他信息
-    total_freight = models.CharField(max_length=50, verbose_name='总运费', default='12.00')
+    total_freight = models.IntegerField(verbose_name='总运费', default='12.00')
     payment_method = models.CharField(max_length=50, verbose_name='付款方式', default='Default Carrier')
     return_requirement = models.CharField(max_length=50, verbose_name='回单要求', default='Default returnRequirement')
     other_expenses = models.CharField(max_length=50, verbose_name='其他支出', default='12.00')

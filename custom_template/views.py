@@ -185,3 +185,19 @@ def template_detail_api(request, template_id):
         "field_positions": template.field_positions,  # 返回字段位置信息
         "created_at": template.created_at.strftime('%Y-%m-%d %H:%M:%S')
     })
+
+
+@custom_login_required
+@login_required
+def copy_template(request, template_id):
+    """复制模板"""
+    original_template = get_object_or_404(CustomTemplate, id=template_id)
+    
+    # 创建新模板，名称添加"副本"后缀
+    new_template = CustomTemplate.objects.create(
+        name=f"{original_template.name} (副本)",
+        content=original_template.content,
+        field_positions=original_template.field_positions
+    )
+    
+    return redirect('custom_template:template_list')

@@ -12,7 +12,7 @@
     <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
         <div class="title-container">
             <div class="title-group">
-                <input style="text-align: right; font-size: 22px;" type="text" class="title-underline" name="companyName" value="道鑫疆" placeholder="__________________">
+                <input style="text-align: right; font-size: 22px;" type="text" class="title-underline" name="companyName" value="{{ order.company_name }}" placeholder="__________________">
                 <h2>物流公司托运单</h2>
             </div>
         </div>
@@ -96,7 +96,7 @@
                                value="{{ item.quantity }}"></td>
                     <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][weight]" required
                                value="{{ item.weight }}"></td>
-                    <td><input type="number" step="0.1" name="items[{{ forloop.counter0 }}][volume]" required
+                    <td><input type="number" step="0.001" name="items[{{ forloop.counter0 }}][volume]" required
                                value="{{ item.volume }}"></td>
                     <td><input type="number" step="1" name="items[{{ forloop.counter0 }}][deliveryCharge]" required
                                value="{{ item.delivery_charge }}"></td>
@@ -143,6 +143,8 @@
                         </option>
                         <option value="月结" {% if order.payment_method == '月结' %}selected{% endif %}>月结
                         </option>
+			<option value="回单付" {% if order.payment_method == '回单付' %}selected{% endif %}>回单付
+                        </option>
                     </select>
                 </td>
                 <th>交货方式</th>
@@ -164,10 +166,10 @@
                     <td><input type="text" id="otherExpenses" name="otherExpenses" value="{{ order.other_expenses }}">
                     </td>
                     <th>客户单号</th>
-                    <td><input type="number" id="customerOrderNo" name="customerOrderNo" required
+                    <td><input type="text" id="customerOrderNo" name="customerOrderNo" required
                                value="{{ order.customer_order_no }}"></td>
                     <th>承运商</th>
-                    <td><input type="text" id="carrier" name="carrier" required value="{{ order.carrier }}"></td>
+                    <td><input type="text" id="carrier" name="carrier" value="{{ order.carrier }}"></td>
                 </tr>
                 <tr>
                     <th>发货人签名</th>
