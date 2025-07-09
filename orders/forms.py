@@ -11,7 +11,8 @@ class OrderForm(forms.ModelForm):
                   'receiver_address', 'total_freight', 'payment_method', 'return_requirement', 'other_expenses',
                   'expense_details', 'carrier', 'carrier_address', 'arrival_address', 'departure_station_phone',
                   'arrival_station_phone', 'customer_order_no', 'date', 'departure_station', 'arrival_station',
-                  'transport_method', 'delivery_method', 'sender_sign', 'receiver_sign', 'id_card', 'order_maker']
+                  'transport_method', 'delivery_method', 'sender_sign', 'receiver_sign', 'id_card', 'order_maker',
+                  'fee_wan', 'fee_qian', 'fee_shi', 'fee_ge', 'fee_bai', 'company_name']
 
 
 ItemFormSet = forms.inlineformset_factory(Order, Item, fields=('item_name', 'package_type', 'quantity', 'weight',

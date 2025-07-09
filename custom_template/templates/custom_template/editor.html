@@ -1,12 +1,18 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自定义模板编辑器</title>
-    <link rel="stylesheet" href="/static/custom_template/editor.css">
-</head>
-<body>
+{% extends "base.html" %}
+
+<title>{% block title %}自定义模板编辑器{% endblock %}</title>
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/custom_template/editor.css">
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">模板管理</li>
+<li class="breadcrumb-item active">自定义打印模板</li>
+{% endblock %}
+
+{% block content %}
 <div class="editor-container">
     <header class="editor-header">
         <h1>自定义模板编辑器</h1>
@@ -28,7 +34,7 @@
             <label for="uploadBackground" class="upload-background-button">上传背景图片</label>
             <input type="file" id="uploadBackground" accept="image/*" style="display: none;">
 	    <!-- 返回首页按钮 -->
-            <a href="/" class="btn btn-secondary">返回首页</a>
+            {% comment %} <a href="/" class="btn btn-secondary">返回首页</a> {% endcomment %}
         </div>
     </form>
 
@@ -47,7 +53,11 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block js %}
+{{ block.super }}
 <script src="/static/custom_template/editor.js"></script>
-</body>
-</html>
+{% endblock %}
+
+

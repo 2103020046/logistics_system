@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}在线物流订单管理系统{% endblock %}</title>
+    {% block css %}
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% endblock %}
+    <style>
+        :root {
+            --sidebar-width: 250px;
+            --header-height: 60px;
+            --breadcrumb-bg: #f8f9fa;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: var(--header-height);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: #34495e;
+            color: #3498db;
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 10px;
+        }
+        
+        .sub-menu {
+            list-style: none;
+            padding-left: 20px;
+            background-color: #34495e;
+            display: none;
+        }
+        
+        .sub-menu li a {
+            padding: 10px 20px;
+        }
+        
+        .sidebar-menu li.active .sub-menu {
+            display: block;
+        }
+        
+        /* 主内容区样式 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumb {
+            background-color: var(--breadcrumb-bg);
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb-item.home-item {
+            color: #000;
+            font-weight: 500;
+        }
+        
+        .breadcrumb-item.home-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        /* 标签页样式 */
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            color: #495057;
+            background-color: white;
+            padding: 0.5rem 1rem;
+            margin-right: 0.2rem;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: #e9ecef #e9ecef #dee2e6;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+            background-color: white;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        
+        .nav-tabs .close-tab {
+            margin-left: 8px;
+            color: #6c757d;
+            cursor: pointer;
+        }
+        
+        .nav-tabs .close-tab:hover {
+            color: #dc3545;
+        }
+        
+        .tab-content {
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 0.25rem 0.25rem;
+        }
+
+        .breadcrumb {
+            align-items: center;
+        }
+        
+        .breadcrumb-left, .breadcrumb-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .breadcrumb-right {
+            gap: 1.5rem; /* 调整登录/注册链接间距 */
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 侧边导航栏 -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" data-tab="home" class="active">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+            </li>
+            <li class="has-submenu">
+                <a href="#">
+                    <i class="fas fa-file-invoice"></i> 订单管理
+                    <i class="fas fa-chevron-down float-right"></i>
+                </a>
+                <!-- 修改侧边栏链接为常规超链接 -->
+                <ul class="sub-menu">
+                    <li><a href="/order/">新增订单</a></li>
+                    <li><a href="/history/">查看历史订单</a></li>
+                </ul>  
+            </li>
+            
+            <li class="has-submenu">
+                <a href="#">
+                    <i class="fas fa-file-alt"></i> 模板管理
+                    <i class="fas fa-chevron-down float-right"></i>
+                </a>
+                <!-- 模板管理菜单 -->
+                <ul class="sub-menu">
+                    <li><a href="/custom_template/editor/">自定义打印模板</a></li>
+                    <li><a href="/custom_template/list/">查看模板列表</a></li>
+                </ul>
+            </li>
+
+        <!-- 新增用户管理菜单 -->
+        <li class="has-submenu">
+            <a href="#">
+                <i class="fas fa-user-cog"></i> 用户管理
+                <i class="fas fa-chevron-down float-right"></i>
+            </a>
+            <ul class="sub-menu">
+                <li><a href="#">用户中心</a></li>
+            </ul>
+        </li>
+        </ul>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 面包屑导航 -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb d-flex justify-content-between align-items-center">
+                <!-- 左侧路径部分 -->
+                <div class="breadcrumb-left">
+                    <li class="breadcrumb-item home-item">
+                        <a href="/"><i class="fas fa-home"></i> 首页</a>
+                    </li>
+                    {% block breadcrumb %}{% endblock %}
+                </div>
+
+                <!-- 右侧登录状态部分 -->
+                <div class="breadcrumb-right d-flex align-items-center gap-3">
+                    {% if user.is_authenticated %}
+                        <!-- 修改下拉菜单部分 -->
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle text-dark text-decoration-none" 
+                            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">个人中心</a></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">注销</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-dark text-decoration-none">登录</a>
+                        <a href="{% url 'register' %}" class="text-dark text-decoration-none">注册</a>
+                    {% endif %}
+                </div>
+            </ol>
+        </nav>
+
+        <!-- 主要内容区 -->
+        <div class="main-container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    {% block js %}
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <!-- 添加Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="/static/bootstrap5/bootstrap.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    {% endblock %}
+</body>
+</html>

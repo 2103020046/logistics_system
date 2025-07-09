@@ -314,7 +314,7 @@ function numberToChinese(num) {
     // 处理拆分后的数字
     const digits = String(num).padStart(5, '0').split('').reverse();
     const splitResult = {
-        '万': digits[4] !== '0' ? chineseNums[digits[4]] : '',
+        '万': digits[4] !== '0' ? chineseNums[digits[4]] : '零',
         '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '零',
         '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '零',
         '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '零',

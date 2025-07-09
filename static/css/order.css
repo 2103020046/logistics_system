@@ -2,7 +2,7 @@
 
 /* 确保容器是居中的块级元素 */
 .container {
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;

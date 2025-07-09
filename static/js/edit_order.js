@@ -13,9 +13,9 @@ function validateForm() {
 }
 
 // 监听返回按钮
-document.getElementById('backButton').addEventListener('click', function() {
-    window.history.back();
-});
+// document.getElementById('backButton').addEventListener('click', function() {
+//     window.history.back();
+// });
 
 
 function updateCancelBtnVisibility() {

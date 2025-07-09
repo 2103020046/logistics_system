@@ -1,61 +1,67 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自定义模板列表</title>
-    <style>
-        /* 保持原有样式 */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+{% extends "base.html" %}
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+<title>{% block title %}自定义模板列表{% endblock %}</title>
 
-        th {
-            background-color: #f4f4f4;
-        }
+{% block css %}
+{{ block.super }}
+<style>
+    /* 保持原有样式 */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .btn {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-        .btn-danger {
-            background-color: #dc3545;
-        }
+    th {
+        background-color: #f4f4f4;
+    }
 
-	.btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            color: white;
-        }
-	
-	.btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-        .btn-info:hover {
-            background-color: #138496;
-            color: white;
-        }
-    </style>
-</head>
-<body>
+    .btn {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 5px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+.btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        color: white;
+    }
+
+.btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">模板管理</li>
+<li class="breadcrumb-item active">自定义模板列表</li>
+{% endblock %}
+
+{% block content %}
 <h1>自定义模板列表</h1>
 
 <table>
@@ -93,9 +99,12 @@
 <!-- 在文件底部，</table>标签后添加 -->
 <p class="d-flex justify-content-between mt-4">
     <a href="{% url 'custom_template:editor' %}" class="btn">新建模板</a>
-    <a href="/" class="btn btn-secondary">返回首页</a>
+    {% comment %} <a href="/" class="btn btn-secondary">返回首页</a> {% endcomment %}
 </p>
+{% endblock %}
 
+{% block js %}
+{{ block.super }}
 <!-- 引入 JavaScript 实现“查看”功能 -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -159,5 +168,6 @@
         });
     });
 </script>
-</body>
-</html>
+{% endblock %}
+
+

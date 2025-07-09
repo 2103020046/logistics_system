@@ -13,12 +13,11 @@ function validateForm() {
 }
 
 // 监听返回按钮
-document.getElementById('backButton').addEventListener('click', function () {
-    window.history.back();
-});
+// document.getElementById('backButton').addEventListener('click', function () {
+//     window.history.back();
+// });
 document.getElementById('orderForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    
     
     // 验证表单
     if (!validateForm()) return;
@@ -42,8 +41,8 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
         const quantity = parseFloat(cells[2].querySelector('input').value) || 0;
         const weight = parseFloat(cells[3].querySelector('input').value) || 0;
         const volume = parseFloat(cells[4].querySelector('input').value) || 0;
-        const freight = parseFloat(cells[5].querySelector('input').value) || 0;
-        const remarks = cells[6].querySelector('input').value;
+        const freight = parseFloat(cells[9].querySelector('input').value) || 0;
+        const remarks = cells[10].querySelector('input').value;
 
         formData.set(`items[${index}][productName]`, productName);
         formData.set(`items[${index}][packageType]`, packageType);
@@ -53,6 +52,13 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
         formData.set(`items[${index}][freight]`, freight);
         formData.set(`items[${index}][remarks]`, remarks);
     });
+
+    // 新增：显式收集费用拆分字段
+    formData.set('fee_wan', document.getElementById('feeWan').value);
+    formData.set('fee_qian', document.getElementById('feeQian').value);
+    formData.set('fee_bai', document.getElementById('feeBai').value);
+    formData.set('fee_shi', document.getElementById('feeShi').value);
+    formData.set('fee_ge', document.getElementById('feeGe').value);
 
     // 发送数据到后端
     fetch('/api/orders/', {
@@ -66,7 +72,18 @@ document.getElementById('orderForm').addEventListener('submit', function (event)
                 const orderId = data.orderId;
                 return fetch(`/api/orders/${orderId}`, {method: 'GET'});
             } else {
-                alert(`提交订单失败：${data.message}`);
+                // 将错误消息转换为中文
+                const errorMessages = {
+                    'invalid_data': '提交的数据不完整或格式错误',
+                    'server_error': '服务器处理请求时出错',
+                    'duplicate_order': '订单号已存在',
+                    'invalid_company': '公司名称无效',
+                    'invalid_items': '货物信息不完整',
+                    'django.db.utils.IntegrityError': '订单号已存在，请检查运单号是否重复'
+                };
+                const chineseMessage = errorMessages[data.message] || 
+                                    (data.message.includes('Duplicate entry') ? '订单号已存在，请检查运单号是否重复' : data.message);
+                alert(`提交订单失败：${chineseMessage}`);
             }
         })
         .catch(error => {
@@ -146,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// 修改预览按钮的事件处理函数
 document.getElementById('previewButton').addEventListener('click', function () {
     const selectedTemplateId = document.getElementById('templateSelector').value;
     if (!selectedTemplateId) {
@@ -182,6 +200,13 @@ document.getElementById('previewButton').addEventListener('click', function () {
             data[underscoreKey] = value;
         }
     });
+
+    // 新增：手动添加费用拆分字段
+    data.fee_wan = document.getElementById('feeWan').value;
+    data.fee_qian = document.getElementById('feeQian').value;
+    data.fee_bai = document.getElementById('feeBai').value;
+    data.fee_shi = document.getElementById('feeShi').value;
+    data.fee_ge = document.getElementById('feeGe').value;
 
     // 从后端获取模板内容
     fetch(`/custom_template/api/templates/${selectedTemplateId}/`)
@@ -265,6 +290,22 @@ document.getElementById('previewButton').addEventListener('click', function () {
                         }
                         body { font-family: Arial, sans-serif; }
                         .field { position: absolute; padding: 5px; }
+                        
+                        /* 添加特定字段的打印样式 */
+                        .field[data-name="托运公司名称"] {
+                            width: 200px !important;
+                            font-size: 36px !important;
+                        }
+                        
+                        .field[data-name="发货人"],
+			.field[data-name="收货人"],
+                        .field[data-name="发货人地址"],
+                        .field[data-name="收货人地址"],
+                        .field[data-name="发站地址"],
+                        .field[data-name="到站地址"] {
+                            width: 260px !important;
+                            font-size: 20px !important;
+                        }
                     </style>
                 </head>
                 <body>
@@ -340,6 +381,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// 修改事件监听逻辑
+document.addEventListener('DOMContentLoaded', function() {
+    const totalFeeInput = document.getElementById('totalFee');
+    const feeDescriptionInput = document.getElementById('feeDescription');
+    
+    if (totalFeeInput && feeDescriptionInput) {
+        // 确保合计金额输入框是只读的
+        feeDescriptionInput.readOnly = true;
+        
+        totalFeeInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const num = parseFloat(value) || 0;
+            const chinese = numberToChinese(num);
+            
+            // 更新各个输入框
+            document.getElementById('feeWan').value = chinese.split['万'];
+            document.getElementById('feeQian').value = chinese.split['仟'];
+            document.getElementById('feeBai').value = chinese.split['佰'];
+            document.getElementById('feeShi').value = chinese.split['拾'];
+            document.getElementById('feeGe').value = chinese.split['个'];
+            document.getElementById('feeDescription').value = chinese.full || '零';
+
+        });
+    }
+});
 // 在文件顶部添加数字转中文大写的函数
 // 修改numberToChinese函数
 function numberToChinese(num) {
@@ -377,39 +443,16 @@ function numberToChinese(num) {
     const digits = String(num).padStart(5, '0').split('').reverse();
     const splitResult = {
         '万': digits[4] !== '0' ? chineseNums[digits[4]] : '',
-        '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '',
-        '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '',
-        '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '',
-        '个': digits[0] !== '0' ? chineseNums[digits[0]] : ''
+        '仟': digits[3] !== '0' ? chineseNums[digits[3]] : '零',
+        '佰': digits[2] !== '0' ? chineseNums[digits[2]] : '零',
+        '拾': digits[1] !== '0' ? chineseNums[digits[1]] : '零',
+        '个': digits[0] !== '0' ? chineseNums[digits[0]] : '零'
     };
     
     return {split: splitResult, full: result || '零'};
 }
 
-// 修改事件监听逻辑
-document.addEventListener('DOMContentLoaded', function() {
-    const totalFeeInput = document.getElementById('totalFee');
-    const feeDescriptionInput = document.getElementById('feeDescription');
-    
-    if (totalFeeInput && feeDescriptionInput) {
-        // 确保合计金额输入框是只读的
-        feeDescriptionInput.readOnly = true;
-        
-        totalFeeInput.addEventListener('input', function() {
-            const value = this.value.trim();
-            const num = parseFloat(value) || 0;
-            const chinese = numberToChinese(num);
-            
-            // 更新各个输入框
-            document.getElementById('feeWan').value = chinese.split['万'];
-            document.getElementById('feeQian').value = chinese.split['仟'];
-            document.getElementById('feeBai').value = chinese.split['佰'];
-            document.getElementById('feeShi').value = chinese.split['拾'];
-            document.getElementById('feeGe').value = chinese.split['个'];
-            feeDescriptionInput.value = chinese.full;
-        });
-    }
-});
+
 
 // 在文件顶部添加获取当前时间的函数
 function getCurrentTime() {

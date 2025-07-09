@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>货物托运凭证</title>
-    <link rel="stylesheet" href="/static/css/order.css">
-</head>
+<title>{% block title %}货物托运凭证{% endblock %}</title>
 
-<body>
-<div class="container">
-    
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/css/order.css">
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">订单管理</li>
+<li class="breadcrumb-item active">新增订单</li>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1420px;">    
     <form id="orderForm" method="post">
         <!-- 订单信息表 -->
         <div class="title-container">
@@ -154,7 +158,7 @@
         <!-- 修改返回按钮 -->
         <!-- 修改按钮部分 -->
         <div style="clear: both; text-align: right; margin-top: 20px;">
-            <button type="button" id="backButton" class="back-button">返回首页</button>
+            {% comment %} <button type="button" id="backButton" class="back-button">返回首页</button> {% endcomment %}
             <button type="button" id="previewButton">预览</button>
             <button type="button" id="printLabelBtn">打印标签</button>
             <button type="submit">提交订单</button>
@@ -191,7 +195,7 @@
         <div>
             <label for="templateSelector">选择模板：</label>
             <select id="templateSelector">
-                <option value="">请选择模板</option>
+                {% comment %} <option value="">请选择模板</option> {% endcomment %}
             </select>
         </div>
         <!-- 在additionalTable表格的最后添加隐藏的金额拆分行 -->
@@ -204,8 +208,9 @@
         </tr>
     </form>
 </div>
+{% endblock %}
 
+{% block js %}
+{{ block.super }}
 <script src="/static/js/order.js"></script>
-</body>
-
-</html>
+{% endblock %}

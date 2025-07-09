@@ -1,13 +1,18 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>编辑货物托运凭证</title>
-    <link rel="stylesheet" href="/static/css/order.css">
-</head>
+<title>{% block title %}编辑货物托运凭证{% endblock %}</title>
 
-<body>
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/css/order.css">
+{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">订单管理</li>
+<li class="breadcrumb-item active">编辑订单</li>
+{% endblock %}
+
+{% block content %}
 <div class="container">
     <form id="orderForm" action="{% url 'edit_order' order.id %}" method="POST">
         <div class="title-container">
@@ -214,6 +219,10 @@
             <select id="templateSelector" class="form-control"></select>
         </div>
 </div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
 
 <script src="/static/js/edit_order.js"></script>
 <script>
@@ -295,6 +304,6 @@
             });
     });
 </script>
-</body>
+{% endblock %}
 
-</html>
+
