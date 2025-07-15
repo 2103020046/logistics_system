@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>广州道鑫疆物流配送有限公司 - 专业广州-乌鲁木齐-霍尔果斯专线物流</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-color: #FFFFFF;
+        }
+        
+        .bg-primary {
+            background-color: #1A365D;
+        }
+        
+        .text-primary {
+            color: #1E50B3;
+        }
+        
+        .bg-secondary {
+            background-color: #FF7D00;
+        }
+        
+        .text-secondary {
+            color: #FF7D00;
+        }
+        
+        .bg-content {
+            background-color: #f5f5f5;
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+        
+        .floating-phone {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .nav-shadow {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: #FFFFFF;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3, h4 {
+            font-weight: 700;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+        }
+        
+        h4 {
+            font-size: 1.6rem;
+        }
+        
+        .nav-hover:hover {
+            background-color: #2C5282;
+        }
+        
+        .highlight-orange {
+            color: #FF7D00;
+            font-weight: bold;
+        }
+        
+        .highlight-red {
+            color: #E53E3E;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 浮动电话按钮 -->
+    <div class="fixed right-6 bottom-6 z-50">
+        <a href="tel:13974960951" class="bg-secondary text-white rounded-full p-4 shadow-lg flex items-center justify-center floating-phone hover:bg-opacity-90 transition">
+            <i class="fas fa-phone-alt text-xl mr-2"></i>
+            <span class="font-bold">13974960951</span>
+        </a>
+    </div>
+
+    <!-- 导航栏 - 优化后 -->
+    <nav class="bg-primary shadow-md sticky top-0 z-50" >
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo和公司名称 -->
+                <div class="flex items-center space-x-2">
+                    <img src="/static/image/dxj_logo1.png" style="width:100px"></img>
+                    <span class="text-lg font-bold text-white"><a href="/" class="px-3 py-2 text-white hover:text-gray-200 transition">广州道鑫疆物流配送有限公司</a></span>
+                </div>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex space-x-6">
+                    <a href="#home" class="px-3 py-2 text-white hover:text-gray-200 transition">首页</a>
+                    <a href="#about" class="px-3 py-2 text-white hover:text-gray-200 transition">关于我们</a>
+                    <a href="#services" class="px-3 py-2 text-white hover:text-gray-200 transition">服务项目</a>
+                    <a href="#routes" class="px-3 py-2 text-white hover:text-gray-200 transition">线路介绍</a>
+                    <a href="#contact" class="px-3 py-2 text-white hover:text-gray-200 transition">联系我们</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button class="md:hidden text-white focus:outline-none" id="mobileMenuBtn">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div class="md:hidden bg-primary shadow-lg hidden" id="mobileMenu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#home" class="block px-3 py-2 text-white hover:bg-blue-700 rounded-md">首页</a>
+                <a href="#about" class="block px-3 py-2 text-white hover:bg-blue-700 rounded-md">关于我们</a>
+                <a href="#services" class="block px-3 py-2 text-white hover:bg-blue-700 rounded-md">服务项目</a>
+                <a href="#routes" class="block px-3 py-2 text-white hover:bg-blue-700 rounded-md">线路介绍</a>
+                <a href="#contact" class="block px-3 py-2 text-white hover:bg-blue-700 rounded-md">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner - 优化后 -->
+    <section id="home" class="bg-gradient-to-r from-blue-50 to-gray-50 py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <!-- 文字内容 -->
+                <div class="md:w-1/2 mb-12 md:mb-0 md:pr-10">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 leading-tight">
+                        专业<span class="text-primary">广州-乌鲁木齐-霍尔果斯</span><br>专线物流服务
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        15年专注新疆专线物流，每日发车，准时送达<br>
+                        覆盖全疆各地中转配送，安全可靠有保障
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="tel:13974960951" class="bg-primary hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg inline-flex items-center justify-center transition">
+                            <i class="fas fa-phone-alt mr-2"></i> 立即咨询: 139-7496-0951
+                        </a>
+                        <a href="#contact" class="bg-white text-primary border border-primary hover:bg-gray-50 font-medium py-3 px-6 rounded-lg inline-flex items-center justify-center transition">
+                            <i class="fas fa-envelope mr-2"></i> 在线留言
+                        </a>
+                    </div>
+                    <div class="mt-6 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <span>24小时客服 · 免费咨询 · 价格透明</span>
+                    </div>
+                </div>
+                
+                <!-- 图片 -->
+                <div class="md:w-1/2">
+                    <div class="relative rounded-xl overflow-hidden shadow-xl">
+                        <img src="/static/image/logistics_car.jpg">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-6 text-white">
+                            <p class="text-sm font-medium">广州 · 乌鲁木齐 · 霍尔果斯</p>
+                            <h3 class="text-xl font-bold">每日直达专线</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务优势 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">我们的服务优势</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="rounded-lg p-6 service-card">
+                    <div class="bg-primary bg-opacity-10 text-primary w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-calendar-check text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">每天发车</h3>
+                    <p class="text-gray-600 text-center">广州至乌鲁木齐、霍尔果斯专线，每日固定班次，准时发车</p>
+                </div>
+                
+                <div class="rounded-lg p-6 service-card">
+                    <div class="bg-primary bg-opacity-10 text-primary w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-comments text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">咨询免费</h3>
+                    <p class="text-gray-600 text-center">专业客服24小时在线，解答您的物流疑问，全程不收费</p>
+                </div>
+                
+                <div class="rounded-lg p-6 service-card">
+                    <div class="bg-primary bg-opacity-10 text-primary w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-tags text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">价格灵活</h3>
+                    <p class="text-gray-600 text-center">根据货物情况定制最优价格方案，让您享受实惠物流服务</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800">关于我们</h2>
+                    <p class="text-gray-600 mb-4">广州道鑫疆物流配送有限公司是一家专注于广州至新疆地区专线物流服务的现代化物流企业。</p>
+                    <p class="text-gray-600 mb-4">公司秉承"客户至上、诚信为本"的经营理念，致力于为客户提供安全、高效、经济的物流解决方案。</p>
+                    <p class="text-gray-600 mb-6">"成交只是开始，服务永无止境"是我们的服务宗旨，我们相信优质的服务是建立长期合作关系的基石。</p>
+                    <div class="py-2">
+                        <p class="highlight-orange">咨询不收费，解答不要钱。只要你一个电话，价格您说了算，让货全程无忧。</p>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://s.coze.cn/image/VmdXDkLntKI/" alt="物流仓库" class="rounded-lg shadow-lg w-full hover-scale">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务项目 -->
+    <section id="services" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">服务项目</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg overflow-hidden shadow-md service-card">
+                    <img src="https://s.coze.cn/image/igVexqMK_dI/" alt="专线物流" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-secondary text-white p-2 rounded-full mr-3">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">专线物流</h3>
+                        </div>
+                        <p class="text-gray-600">广州至乌鲁木齐、霍尔果斯直达专线，覆盖全疆各地中转配送，每日固定班次发车。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md service-card">
+                    <img src="https://s.coze.cn/image/6bRV-8q714E/" alt="中转配送" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-secondary text-white p-2 rounded-full mr-3">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">中转配送</h3>
+                        </div>
+                        <p class="text-gray-600">覆盖新疆全境的中转配送网络，提供门到门服务，确保货物安全准时送达。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md service-card">
+                    <img src="https://s.coze.cn/image/-VIC1jCKOQo/" alt="仓储服务" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-secondary text-white p-2 rounded-full mr-3">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">仓储服务</h3>
+                        </div>
+                        <p class="text-gray-600">提供广州、乌鲁木齐两地专业仓储服务，支持短期存储、分拣、包装等增值服务。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 线路介绍 -->
+    <section id="routes" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">线路介绍</h2>
+            
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <h3 class="text-2xl font-bold mb-4 text-primary">广州-乌鲁木齐-霍尔果斯专线</h3>
+                    <p class="text-gray-600 mb-4">我们的专线物流服务覆盖广州至乌鲁木齐、霍尔果斯全程，并可中转至新疆各地。</p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>每日固定班次发车，准时准点</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>广州至乌鲁木齐全程约3-5天</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>乌鲁木齐至霍尔果斯约1-2天</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span>全疆各地中转配送网络覆盖</span>
+                        </li>
+                    </ul>
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <p class="font-medium text-gray-700"><i class="fas fa-info-circle text-primary mr-2"></i> 发车时间：广州每日<span class="highlight-red">21:00</span>发车</p>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="bg-white p-4 rounded-lg shadow-lg">
+                        <div class="mermaid">
+                            graph LR
+                                A[广州] -->|3-5天| B[乌鲁木齐]
+                                B -->|1-2天| C[霍尔果斯]
+                                B --> D[喀什]
+                                B --> E[和田]
+                                B --> F[阿克苏]
+                                B --> G[库尔勒]
+                                B --> H[伊宁]
+                                style A fill:#1E50B3,color:#fff
+                                style B fill:#FF7D00,color:#fff
+                                style C fill:#1E50B3,color:#fff
+                                style D fill:#4CAF50,color:#fff
+                                style E fill:#4CAF50,color:#fff
+                                style F fill:#4CAF50,color:#fff
+                                style G fill:#4CAF50,color:#fff
+                                style H fill:#4CAF50,color:#fff
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-xl p-8">
+                <h3 class="text-2xl font-bold mb-6 text-center text-gray-800">服务覆盖区域</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">乌鲁木齐</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">喀什</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">和田</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">阿克苏</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">库尔勒</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">伊宁</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">哈密</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <i class="fas fa-map-marker-alt text-primary text-2xl mb-2"></i>
+                        <p class="font-medium">吐鲁番</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户评价 -->
+    <section class="py-16 bg-primary text-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">客户评价</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-filter backdrop-blur-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-bold mr-4">张</div>
+                        <div>
+                            <h4 class="font-bold">张先生</h4>
+                            <p class="text-sm opacity-80">电子产品批发商</p>
+                        </div>
+                    </div>
+                    <p class="italic">"与道鑫疆合作三年了，他们的专线物流非常准时，从广州到乌鲁木齐基本4天就能到，货物也从没出过问题。"</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-filter backdrop-blur-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-bold mr-4">李</div>
+                        <div>
+                            <h4 class="font-bold">李女士</h4>
+                            <p class="text-sm opacity-80">服装零售商</p>
+                        </div>
+                    </div>
+                    <p class="italic">"价格公道，服务态度好。特别是他们的中转配送网络，能把货物送到喀什我们县城的门店，省去了很多麻烦。"</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-10 rounded-lg p-6 backdrop-filter backdrop-blur-sm">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl font-bold mr-4">王</div>
+                        <div>
+                            <h4 class="font-bold">王经理</h4>
+                            <p class="text-sm opacity-80">食品加工企业</p>
+                        </div>
+                    </div>
+                    <p class="italic">"冷链物流做得很好，我们的冷冻食品从广州运到乌鲁木齐，全程温度控制稳定，客户反馈非常满意。"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">联系我们</h2>
+            
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                    <h3 class="text-2xl font-bold mb-4 text-primary">联系方式</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">咨询电话</h4>
+                                <p class="text-gray-600">13974960951 / 13629938726</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">电子邮箱</h4>
+                                <p class="text-gray-600">3165563263@qq.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">公司地址</h4>
+                                <p class="text-gray-600">广州市白云区安发物流园A5栋53-58</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">服务时间</h4>
+                                <p class="text-gray-600">周一至周日 8:00-20:00</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h4 class="text-xl font-bold mb-4">微信扫码添加好友</h4>
+                            <div class="bg-white p-4 rounded-lg shadow-md inline-block">
+                                <img src="/static/image/zq_wechat.jpg" alt="微信二维码" class="w-32 h-32 object-contain">
+                            </div>
+                            <p class="mt-2 text-gray-600">或搜索微信号：yyxzk_82</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <!-- ... 其他代码保持不变 ... -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-xl font-bold mb-6 text-center text-gray-800">在线咨询</h3>
+                        
+                        <form method="POST" action="{% url 'home' %}">
+                            {% csrf_token %}
+                            
+                            <!-- 显示消息 -->
+                            {% if messages %}
+                            <div class="mb-4">
+                                {% for message in messages %}
+                                <div class="{% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} px-4 py-3 rounded mb-2">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">公司名称</label>
+                                    <input type="text" name="company_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">货物类型</label>
+                                    <input type="text" name="cargo_type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">联系电话</label>
+                                    <input type="tel" name="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">咨询内容</label>
+                                    <textarea name="content" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-secondary hover:bg-opacity-90 text-white font-bold py-3 px-4 rounded-lg transition">
+                                    <i class="fas fa-paper-plane mr-2"></i> 提交咨询
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-truck text-white text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">广州道鑫疆物流配送有限公司</span>
+                    </div>
+                    <p class="text-gray-400 mt-2">广州市白云区安发物流园A5栋53-58</p>
+                    <p class="text-gray-400">服务时间：周一至周日 8:00-20:00</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#home" class="text-gray-400 hover:text-white transition">首页</a>
+                    <a href="#about" class="text-gray-400 hover:text-white transition">关于我们</a>
+                    <a href="#services" class="text-gray-400 hover:text-white transition">服务项目</a>
+                    <a href="#routes" class="text-gray-400 hover:text-white transition">线路介绍</a>
+                    <a href="#contact" class="text-gray-400 hover:text-white transition">联系我们</a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
+                <p>© 2025 广州道鑫疆物流配送有限公司 版权所有</p>
+                <p class="mt-2">created by <a href="https://gzdxj.top" class="text-white hover:underline">zhangjing</a> | 页面内容均由 张劲 生成，仅供参考</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.5.0/mermaid.min.js"></script>
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+        
+        // 初始化mermaid图表
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('nav-shadow');
+            } else {
+                nav.classList.remove('nav-shadow');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端，点击后关闭菜单
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

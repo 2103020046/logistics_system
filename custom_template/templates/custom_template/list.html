@@ -53,6 +53,12 @@
         background-color: #138496;
         color: white;
     }
+    /* 新增样式，让表单内联显示 */
+    td form {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+    }
 </style>
 {% endblock %}
 
@@ -84,8 +90,11 @@
                 <a href="{% url 'custom_template:editor' %}?template_id={{ template.id }}" class="btn">编辑</a>
                 <!-- 新增复制按钮 -->
                 <a href="{% url 'custom_template:copy_template' template.id %}" class="btn btn-info">复制</a>
-                <a href="{% url 'custom_template:delete_template' template.id %}" class="btn btn-danger"
-                   onclick="return confirm('确定要删除此模板吗？')">删除</a>
+                <form action="{% url 'custom_template:delete_template' template.id %}" method="post"
+                    onsubmit="return confirm('确定要删除此模板吗？')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">删除</button>
+                </form>
             </td>
         </tr>
     {% empty %}

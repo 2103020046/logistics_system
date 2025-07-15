@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物流订单录入</title>
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .order-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .section-title {
+            color: var(--secondary-color);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .required-field label:after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 10px 30px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .form-check-label {
+            margin-left: 5px;
+        }
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card order-card mb-4">
+                    <div class="card-header bg-white border-0">
+                        <h3 class="mb-0">
+                            <i class="bi bi-file-earmark-text me-2"></i>
+                            <a href="/" style="text-decoration: none;" class="px-3 py-2 text-black hover:text-gray-200 transition">物流订单录入</a>
+                        </h3>
+                    </div>
+                    <!-- 添加消息显示区域 -->
+                    {% if messages %}
+                    <div class="container">
+                        {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <form method="post" id="orderForm" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- 运输信息 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">运输信息</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6 required-field">
+                                        {{ form.departure.label_tag }}
+                                        {{ form.departure }}
+                                        <div class="invalid-feedback">请填写出发地</div>
+                                    </div>
+                                    <div class="col-md-6 required-field">
+                                        {{ form.destination.label_tag }}
+                                        {{ form.destination }}
+                                        <div class="invalid-feedback">请填写到达地</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 发货人信息 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">发货人信息</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4 required-field">
+                                        {{ form.shipper_name.label_tag }}
+                                        {{ form.shipper_name }}
+                                        <div class="invalid-feedback">请填写发货人姓名</div>
+                                    </div>
+                                    <div class="col-md-4 required-field">
+                                        {{ form.shipper_phone.label_tag }}
+                                        {{ form.shipper_phone }}
+                                        <div class="invalid-feedback">请输入11位手机号码</div>
+                                    </div>
+                                    <div class="col-12 required-field">
+                                        {{ form.shipper_address.label_tag }}
+                                        {{ form.shipper_address }}
+                                        <div class="invalid-feedback">请填写详细地址</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 收货人信息 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">收货人信息</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4 required-field">
+                                        {{ form.receiver_name.label_tag }}
+                                        {{ form.receiver_name }}
+                                        <div class="invalid-feedback">请填写收货人姓名</div>
+                                    </div>
+                                    <div class="col-md-4 required-field">
+                                        {{ form.receiver_phone.label_tag }}
+                                        {{ form.receiver_phone }}
+                                        <div class="invalid-feedback">请输入11位手机号码</div>
+                                    </div>
+                                    <div class="col-12 required-field">
+                                        {{ form.receiver_address.label_tag }}
+                                        {{ form.receiver_address }}
+                                        <div class="invalid-feedback">请填写详细地址</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 商品信息 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">商品信息</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-3 required-field">
+                                        {{ form.goods_name.label_tag }}
+                                        {{ form.goods_name }}
+                                        <div class="invalid-feedback">请填写商品名称</div>
+                                    </div>
+                                    <div class="col-md-3 required-field">
+                                        {{ form.package_type.label_tag }}
+                                        {{ form.package_type }}
+                                        <div class="invalid-feedback">请填写包装类型</div>
+                                    </div>
+                                    <div class="col-md-2 required-field">
+                                        {{ form.quantity.label_tag }}
+                                        {{ form.quantity }}
+                                        <div class="invalid-feedback">请输入件数</div>
+                                    </div>
+                                    <div class="col-md-2 required-field">
+                                        {{ form.weight.label_tag }}
+                                        {{ form.weight }}
+                                        <div class="invalid-feedback">请输入重量</div>
+                                    </div>
+                                    <div class="col-md-2 required-field">
+                                        {{ form.volume.label_tag }}
+                                        {{ form.volume }}
+                                        <div class="invalid-feedback">请输入体积</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 运输选项 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">运输选项</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4 required-field">
+                                        {{ form.delivery_method.label_tag }}
+                                        {{ form.delivery_method }}
+                                        <div class="invalid-feedback">请选择交货方式</div>
+                                    </div>
+                                    <div class="col-md-4 required-field">
+                                        {{ form.transport_type.label_tag }}
+                                        {{ form.transport_type }}
+                                        <div class="invalid-feedback">请选择运输要求</div>
+                                    </div>
+                                    <div class="col-md-4 required-field">
+                                        {{ form.payment_method.label_tag }}
+                                        {{ form.payment_method }}
+                                        <div class="invalid-feedback">请选择付款方式</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 其他信息 -->
+                            <div class="mb-4">
+                                <h5 class="section-title">其他信息</h5>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        {{ form.receipt_requirements.label_tag }}
+                                        {{ form.receipt_requirements }}
+                                    </div>
+                                    <div class="col-12">
+                                        {{ form.remarks.label_tag }}
+                                        {{ form.remarks }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-2"></i>提交订单
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/bootstrap5/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        // 自动关闭alert消息
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+        
+        // 实时表单验证
+        $('#orderForm').on('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 显示所有无效字段的错误信息
+                $(this).find(':invalid').each(function() {
+                    $(this).addClass('is-invalid');
+                });
+            }
+            
+            $(this).addClass('was-validated');
+        });
+
+        // 电话号码实时验证
+        $('input[type="tel"]').on('input', function() {
+            const regex = /^1[3-9]\d{9}$/;
+            if (!regex.test($(this).val())) {
+                $(this).addClass('is-invalid');
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        // 数字字段最小值验证
+        $('input[type="number"]').on('change', function() {
+            const min = parseFloat($(this).attr('min')) || 0;
+            const value = parseFloat($(this).val()) || 0;
+            if (value < min) {
+                $(this).val(min);
+            }
+        });
+    });
+    </script>
+</body>
+</html>

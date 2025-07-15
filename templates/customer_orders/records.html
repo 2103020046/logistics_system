@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单记录查询</title>
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <h2 class="mb-4"><a href="/" style="text-decoration: none;" class="px-3 py-2 text-black hover:text-gray-200 transition">订单历史记录</a></h2>
+        
+        <!-- 查询条件 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" placeholder="订单编号">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control datepicker" placeholder="开始日期">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control datepicker" placeholder="结束日期">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary w-100">查询</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单表格 -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>订单编号</th>
+                        <th>发货人</th>
+                        <th>收货人</th>
+                        <th>商品信息</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <!-- 在表格中显示订单编号 -->
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.shipper_name }}</td>
+                        <td>{{ order.receiver_name }}</td>
+                        <td>{{ order.goods_name }} ({{ order.quantity }}件)</td>
+                        <td>
+                            <span class="badge bg-primary">{{ order.status }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-info">详情</a>
+                                <form action="{% url 'order_delete' order.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ms-2" 
+                                            onclick="return confirm('确定要删除该订单吗？')">删除</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/static/jquery/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    $(document).ready(function() {
+        // 初始化日期选择器
+        $('.datepicker').flatpickr({
+            dateFormat: "Y-m-d",
+            locale: "zh"
+        });
+
+        // 表格搜索功能
+        $('#searchInput').on('keyup', function() {
+            const value = $(this).val().toLowerCase();
+            $('tbody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+    </script>
+</body>
+</html>
