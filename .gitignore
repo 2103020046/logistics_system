@@ -12,3 +12,5 @@ Thumbs.db
 
 
 /static_collected/
+*.tar.gz
+*.sql
