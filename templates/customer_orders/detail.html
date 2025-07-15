@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订单详情</title>
+    <link href="/static/bootstrap5/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">订单详情 - {{ order.order_number }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- 运输信息 -->
+                    <div class="col-md-6">
+                        <h5>运输信息</h5>
+                        <p>出发地：{{ order.departure }}</p>
+                        <p>到达地：{{ order.destination }}</p>
+                        <p>交货方式：{{ order.get_delivery_method_display }}</p>
+                        <p>运输要求：{{ order.get_transport_type_display }}</p>
+                        <p>付款方式：{{ order.get_payment_method_display }}</p>
+                    </div>
+                    
+                    <!-- 发货人信息 -->
+                    <div class="col-md-6">
+                        <h5>发货人信息</h5>
+                        <p>姓名：{{ order.shipper_name }}</p>
+                        <p>电话：{{ order.shipper_phone }}</p>
+                        <p>地址：{{ order.shipper_address }}</p>
+                    </div>
+
+                    <!-- 收货人信息 -->
+                    <div class="col-md-6">
+                        <h5>收货人信息</h5>
+                        <p>姓名：{{ order.receiver_name }}</p>
+                        <p>电话：{{ order.receiver_phone }}</p>
+                        <p>地址：{{ order.receiver_address }}</p>
+                    </div>
+
+                    <!-- 商品信息 -->
+                    <div class="col-12">
+                        <hr>
+                        <h5>商品信息</h5>
+                        <p>名称：{{ order.goods_name }}</p>
+                        <p>包装类型：{{ order.package_type }}</p>
+                        <p>件数：{{ order.quantity }}件</p>
+                        <p>重量：{{ order.weight }} kg</p>
+                        <p>体积：{{ order.volume }} m³</p>
+                    </div>
+
+                    <!-- 其他信息 -->
+                    <div class="col-12">
+                        <hr>
+                        <h5>其他信息</h5>
+                        <p>回单要求：{{ order.receipt_requirements|default:"无" }}</p>
+                        <p>备注：{{ order.remarks|default:"无" }}</p>
+                        <p>下单时间：{{ order.order_date|date:"Y-m-d H:i" }}</p>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="col-12 text-center mt-4">
+                        <a href="{% url 'customer_order_records' %}" class="btn btn-secondary">
+                            返回列表
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

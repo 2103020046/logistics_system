@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from reportlab.lib.units import cm
-
+from django.views.decorators.http import require_POST
 from orders.models import Order
 from .models import CustomTemplate
 from django.http import FileResponse, HttpResponseRedirect, JsonResponse
@@ -158,11 +158,12 @@ def generate_pdf(request, template_id, order_id):
     return FileResponse(buffer, as_attachment=True, filename='order.pdf')
 
 
+
+@require_POST
 def delete_template(request, template_id):
     template = get_object_or_404(CustomTemplate, id=template_id)
     template.delete()
     return HttpResponseRedirect(reverse('custom_template:template_list'))
-
 
 def template_list_api(request):
     """返回模板列表"""

@@ -161,7 +161,7 @@
     <div class="sidebar">
         <ul class="sidebar-menu">
             <li>
-                <a href="#" data-tab="home" class="active">
+                <a href="/" data-tab="home" class="active">
                     <i class="fas fa-home"></i> 首页
                 </a>
             </li>
@@ -188,15 +188,28 @@
                     <li><a href="/custom_template/list/">查看模板列表</a></li>
                 </ul>
             </li>
+            <li class="has-submenu">
+                <a href="#">
+                    <i class="fas fa-file-alt"></i> 下单管理
+                    <i class="fas fa-chevron-down float-right"></i>
+                </a>
+                <!-- 修改订单管理子菜单 -->
+                <ul class="sub-menu">
+                    <li><a href="/customer_order/create/">客户下单</a></li>
+                    <li><a href="/customer_order/records/">客户订单记录</a></li>
+                </ul>
+            </li>
 
         <!-- 新增用户管理菜单 -->
         <li class="has-submenu">
             <a href="#">
-                <i class="fas fa-user-cog"></i> 用户管理
+                <i class="fas fa-user-cog"></i> 公司管理
                 <i class="fas fa-chevron-down float-right"></i>
             </a>
             <ul class="sub-menu">
                 <li><a href="#">用户中心</a></li>
+                <li><a href="/company_website/">公司官网</a></li>
+                <li><a href="/company_website/consultations/">咨询记录</a></li>
             </ul>
         </li>
         </ul>

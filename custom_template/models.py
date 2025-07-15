@@ -11,3 +11,7 @@ class CustomTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = '自定义模板'
+        verbose_name_plural = '自定义模板'

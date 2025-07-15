@@ -50,6 +50,9 @@ class Order(models.Model):
     def __str__(self):
         return self.order_number
 
+    class Meta:
+        verbose_name = '新增订单'
+        verbose_name_plural = '新增订单'
 
 class Item(models.Model):
     # 关联到订单
@@ -71,3 +74,7 @@ class Item(models.Model):
 
     def __str__(self):
         return f'{self.item_name} ({self.quantity} 件)'
+
+    class Meta:
+        verbose_name = '商品信息'
+        verbose_name_plural = '商品信息'
