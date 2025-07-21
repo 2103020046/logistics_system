@@ -39,7 +39,7 @@ class CustomerOrder(models.Model):
     
     def __str__(self):
         return f"{self.order_number} - {self.shipper_name}"
-    
+
     class Meta:
         verbose_name = '客户下单'
         verbose_name_plural = '客户下单'

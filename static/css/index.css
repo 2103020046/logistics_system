@@ -89,3 +89,28 @@
     margin-bottom: 1rem;
 }
 
+/* 添加在文件末尾 */
+.footer-section {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+}
+
+.copyright-info {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.beian-link a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.beian-link a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
