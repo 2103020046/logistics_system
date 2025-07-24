@@ -207,7 +207,7 @@ document.getElementById('previewButton').addEventListener('click', function() {
                         /* 添加特定字段的打印样式 */
                         .field[data-name="托运公司名称"] {
                             width: 200px !important;
-                            font-size: 24px !important;
+                            font-size: 36px !important;
                         }
                         
                         .field[data-name="发货人"],

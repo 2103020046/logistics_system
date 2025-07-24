@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 # 在Order模型中添加字段
@@ -53,6 +54,28 @@ class Order(models.Model):
     class Meta:
         verbose_name = '新增订单'
         verbose_name_plural = '新增订单'
+
+    def save(self, *args, **kwargs):
+        if not self.order_number:  # 如果是新订单
+            today = timezone.now().date()
+            date_str = today.strftime('%Y%m%d')
+            
+            # 获取当前用户最新的订单序号
+            last_order = Order.objects.filter(
+                user=self.user,
+                order_number__startswith=date_str
+            ).order_by('-order_number').first()
+            
+            if last_order:
+                # 提取序号并加1
+                last_seq = int(last_order.order_number.split('-')[1])
+                new_seq = last_seq + 1
+            else:
+                new_seq = 1
+                
+            self.order_number = f"{date_str}-{new_seq:02d}"
+            
+        super().save(*args, **kwargs)
 
 class Item(models.Model):
     # 关联到订单

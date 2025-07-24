@@ -37,14 +37,14 @@ class FinanceListView(ListView):
 
     def get_queryset(self):
         # 确保所有订单都有对应的财务记录
-        orders_without_record = Order.objects.exclude(
+        orders_without_record = Order.objects.filter(user=self.request.user).exclude(
             id__in=FinanceRecord.objects.values('order_id')
         )
         for order in orders_without_record:
             FinanceRecord.objects.create(order=order)
         
-        # 继续原有筛选逻辑
-        qs = super().get_queryset()
+        # 继续原有筛选逻辑，但只查询当前用户的订单
+        qs = super().get_queryset().filter(order__user=self.request.user)
         time_filter = self.request.GET.get('time_filter')
         verified_filter = self.request.GET.get('verified_filter')
         
@@ -96,7 +96,7 @@ class ExportExcelView(FinanceListView):
         headers = ["运单号", "总运费", "是否核销", "核销日期", "发货方", "收货方"]
         ws.append(headers)
         
-        # 添加数据
+        # 添加数据，使用get_queryset确保只导出当前用户的数据
         for record in self.get_queryset():
             ws.append([
                 record.order.order_number,
@@ -116,7 +116,9 @@ def verify_order(request, record_id):
         messages.error(request, '您没有权限执行此操作', extra_tags='finance')
         return redirect('finance_list')
     
-    record = get_object_or_404(FinanceRecord, id=record_id)
+    # 确保只能操作自己的订单
+    record = get_object_or_404(FinanceRecord, id=record_id, order__user=request.user)
+    
     record.is_verified = not record.is_verified
     record.verify_date = timezone.now().date() if record.is_verified else None
     record.save()
@@ -124,15 +126,18 @@ def verify_order(request, record_id):
     messages.success(
         request, 
         f'成功{"核销" if record.is_verified else "取消核销"}订单 {record.order.order_number}',
-        extra_tags='finance'  # 添加标记
+        extra_tags='finance'
     )
     return redirect('finance_list')
 
 
-class FinanceOrderDetailView(DetailView):  # 修改类名
+class FinanceOrderDetailView(DetailView):
     model = FinanceRecord
-    template_name = 'finance_order_detail.html'  # 修改模板名称
+    template_name = 'finance_order_detail.html'
     context_object_name = 'record'
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(order__user=self.request.user)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

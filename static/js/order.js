@@ -354,30 +354,35 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.placeholder = formattedDate;
     }
 });
-// 在DOMContentLoaded事件中添加运单号生成逻辑
+// 修改运单号生成逻辑
 document.addEventListener('DOMContentLoaded', function() {
-    // 自动设置当前日期
-    const dateInput = document.getElementById('date');    const orderNoInput = document.getElementById('orderNo');
+    const orderNoInput = document.getElementById('orderNo');
     
-    if (dateInput && orderNoInput) {
+    if (orderNoInput) {
         const today = new Date();
+        const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
+        const dateStr = `${year}${month}${day}`;
         
-        // 获取今天的订单数量（需要后端API支持）
-        fetch('/api/orders/today_count/')
-            .then(response => response.json())
-            .then(data => {
-                const todayCount = data.count || 0;
-                orderNoInput.value = `${month}${day}-${todayCount + 1}`;
-                orderNoInput.placeholder = orderNoInput.value;
-            })
-            .catch(error => {
-                console.error('获取今日订单数失败:', error);
-                // 默认从1开始
-                orderNoInput.value = `${month}${day}-1`;
-                orderNoInput.placeholder = orderNoInput.value;
-            });
+        // 获取当前用户的今日订单数
+        fetch('/api/orders/today_count/', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const todayCount = data.count || 0;
+            orderNoInput.value = `${dateStr}-${String(todayCount + 1).padStart(2, '0')}`;
+            orderNoInput.placeholder = orderNoInput.value;
+        })
+        .catch(error => {
+            console.error('获取今日订单数失败:', error);
+            // 默认从1开始
+            orderNoInput.value = `${dateStr}-01`;
+            orderNoInput.placeholder = orderNoInput.value;
+        });
     }
 });
 
