@@ -287,5 +287,15 @@
         {% endfor %}
     </div>
     {% endif %}
+
+    <!-- 添加权限错误显示区域 -->
+    {% if no_permission %}
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            当前用户 {{ user.username }} 没有财务管理权限
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>

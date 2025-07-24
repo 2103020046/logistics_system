@@ -14,12 +14,26 @@ from django.views.generic import DetailView
 def finance_permission_check(user):
     return user.is_staff or (hasattr(user, 'is_vip') and user.is_vip)
 
-@method_decorator(user_passes_test(finance_permission_check), name='dispatch')
 class FinanceListView(ListView):
     model = FinanceRecord
     template_name = 'finance_list.html'
     context_object_name = 'records'
     paginate_by = 20
+
+    def dispatch(self, request, *args, **kwargs):
+        if not finance_permission_check(request.user):
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def handle_no_permission(self):
+        from django.http import HttpResponseForbidden
+        from django.template import loader
+        template = loader.get_template('finance_list.html')
+        context = {
+            'no_permission': True,
+            'user': self.request.user
+        }
+        return HttpResponseForbidden(template.render(context, self.request))
 
     def get_queryset(self):
         # 确保所有订单都有对应的财务记录
@@ -65,6 +79,7 @@ class FinanceListView(ListView):
             'unverified_amount': total - verified,
             'time_filter': self.request.GET.get('time_filter', ''),
             'verified_filter': self.request.GET.get('verified_filter', ''),
+            'page_obj': context.get('page_obj'),  # 确保传递分页对象
         })
         return context
 
