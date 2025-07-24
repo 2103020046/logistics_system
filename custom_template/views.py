@@ -158,7 +158,6 @@ def generate_pdf(request, template_id, order_id):
     return FileResponse(buffer, as_attachment=True, filename='order.pdf')
 
 
-
 @require_POST
 def delete_template(request, template_id):
     template = get_object_or_404(CustomTemplate, id=template_id)

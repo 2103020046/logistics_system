@@ -1,0 +1,20 @@
+# 自动选择本地版本的迁移文件，避免冲突
+migrations/*.py merge=ours
+
+
+# 统一换行符为 LF（Unix 风格）
+* text=auto
+
+# Python 文件使用 LF
+*.py text eol=lf
+
+# Shell 脚本也使用 LF
+*.sh text eol=lf
+
+# Windows 批处理文件使用 CRLF
+*.bat text eol=crlf
+
+# 图片、PDF 等二进制文件不进行 diff
+*.jpg binary
+*.png binary
+*.pdf binary
