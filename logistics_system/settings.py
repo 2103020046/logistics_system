@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'custom_template',
     'customer_orders',
     'company_website',
+    'finance.apps.FinanceConfig',
 ]
 
 MIDDLEWARE = [
