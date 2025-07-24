@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}财务管理 - 核销状态{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">财务管理</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 筛选表单 -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <select name="time_filter" class="form-select">
+                        <option value="">全部时间</option>
+                        <option value="today" {% if time_filter == 'today' %}selected{% endif %}>今日 ({{ timezone.now.date|date:"Y-m-d" }})</option>
+                        <option value="week" {% if time_filter == 'week' %}selected{% endif %}>本周 (最近7天)</option>
+                        <option value="month" {% if time_filter == 'month' %}selected{% endif %}>本月 (最近30天)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="verified_filter" class="form-select">
+                        <option value="">全部状态</option>
+                        <option value="verified" {% if verified_filter == 'verified' %}selected{% endif %}>已核销</option>
+                        <option value="unverified" {% if verified_filter == 'unverified' %}selected{% endif %}>未核销</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">筛选</button>
+                    <a href="?time_filter=&verified_filter=" class="btn btn-secondary">重置</a>
+                </div>
+                <div class="col-md-3 text-end">
+                    <a href="{% url 'export_excel' %}?{{ request.GET.urlencode }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> 导出Excel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">总运费</h5>
+                    <p class="card-text h4">¥ {{ total_freight }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">已核销金额</h5>
+                    <p class="card-text h4">¥ {{ verified_amount }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title">未核销金额</h5>
+                    <p class="card-text h4">¥ {{ unverified_amount }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单表格 -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>运单号</th>
+                            <th>总运费</th>
+                            <th>核销状态</th>
+                            <th>核销日期</th>
+                            <th>发货方</th>
+                            <th>收货方</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td>{{ record.order.order_number }}</td>
+                            <td>¥{{ record.order.total_freight }}</td>
+                            <td>
+                                {% if record.is_verified %}
+                                    <span class="badge bg-success">已核销</span>
+                                {% else %}
+                                    <span class="badge bg-danger">未核销</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.verify_date|default:"-" }}</td>
+                            <td>{{ record.order.sender }}</td>
+                            <td>{{ record.order.receiver }}</td>
+                            <td>
+                                {% if perms.finance.change_financerecord %}
+                                <div class="d-flex gap-2">
+                                    <form method="post" action="{% url 'verify_order' record.id %}" class="me-2">
+                                        {% csrf_token %}
+                                        {% if not record.is_verified %}
+                                            <button type="submit" class="btn btn-sm btn-outline-success">核销</button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">取消核销</button>
+                                        {% endif %}
+                                    </form>
+                                    <a href="{% url 'finance_order_detail' record.id %}" class="btn btn-sm btn-outline-primary">详情</a>  <!-- 修改路由名称 -->
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">暂无记录</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

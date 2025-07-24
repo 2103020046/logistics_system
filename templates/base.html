@@ -170,11 +170,33 @@
                     <i class="fas fa-file-invoice"></i> 订单管理
                     <i class="fas fa-chevron-down float-right"></i>
                 </a>
-                <!-- 修改侧边栏链接为常规超链接 -->
                 <ul class="sub-menu">
                     <li><a href="/order/">新增订单</a></li>
                     <li><a href="/history/">查看历史订单</a></li>
                 </ul>  
+            </li>
+            
+            <!-- 新增财务管理菜单 -->
+            <li class="has-submenu">
+                <a href="#">
+                    <i class="fas fa-money-bill-wave"></i> 财务管理
+                    <i class="fas fa-chevron-down float-right"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/finance/">财务核销</a></li>
+                </ul>
+            </li>
+            
+            <!-- 修改下单管理图标 -->
+            <li class="has-submenu">
+                <a href="#">
+                    <i class="fas fa-shopping-cart"></i> 下单管理
+                    <i class="fas fa-chevron-down float-right"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/customer_order/create/">客户下单</a></li>
+                    <li><a href="/customer_order/records/">客户订单记录</a></li>
+                </ul>
             </li>
             
             <li class="has-submenu">
@@ -186,17 +208,6 @@
                 <ul class="sub-menu">
                     <li><a href="/custom_template/editor/">自定义打印模板</a></li>
                     <li><a href="/custom_template/list/">查看模板列表</a></li>
-                </ul>
-            </li>
-            <li class="has-submenu">
-                <a href="#">
-                    <i class="fas fa-file-alt"></i> 下单管理
-                    <i class="fas fa-chevron-down float-right"></i>
-                </a>
-                <!-- 修改订单管理子菜单 -->
-                <ul class="sub-menu">
-                    <li><a href="/customer_order/create/">客户下单</a></li>
-                    <li><a href="/customer_order/records/">客户订单记录</a></li>
                 </ul>
             </li>
 
@@ -262,5 +273,19 @@
     <script src="/static/bootstrap5/bootstrap.min.js"></script>
     <script src="/static/js/main.js"></script>
     {% endblock %}
+
+    <!-- 修改消息显示区域 -->
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            {% if 'finance' in message.tags %}  <!-- 只显示财务相关消息 -->
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
 </body>
 </html>

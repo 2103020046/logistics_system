@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}订单详情 - {{ record.order.order_number }}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'finance_list' %}">财务管理</a></li>
+<li class="breadcrumb-item active">订单详情</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>订单基本信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>运单号：</strong> {{ record.order.order_number }}</p>
+                    <p><strong>发货方：</strong> {{ record.order.sender }}</p>
+                    <p><strong>收货方：</strong> {{ record.order.receiver }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>总运费：</strong> ¥{{ record.order.total_freight }}</p>
+                    <p><strong>核销状态：</strong> 
+                        {% if record.is_verified %}
+                            <span class="badge bg-success">已核销</span>
+                        {% else %}
+                            <span class="badge bg-danger">未核销</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>核销日期：</strong> {{ record.verify_date|default:"-" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>商品信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>品名</th>
+                            <th>包装</th>
+                            <th>件数</th>
+                            <th>重量(kg)</th>
+                            <th>体积(m³)</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.item_name|default:"-" }}</td>
+                            <td>{{ item.package_type|default:"-" }}</td>
+                            <td>{{ item.quantity|default:"-" }}</td>
+                            <td>{{ item.weight|default:"-" }}</td>
+                            <td>{{ item.volume|default:"-" }}</td>
+                            <td>{{ item.remarks|default:"无" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">暂无商品信息</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

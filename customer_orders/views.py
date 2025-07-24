@@ -25,10 +25,18 @@ def customer_order_create(request):
                 instance.status = '待处理'
                 instance.save()
                 
-                messages.success(request, f'订单提交成功！您的订单号为: {instance.order_number}')
+                messages.success(
+                    request, 
+                    f'订单提交成功！您的订单号为: {instance.order_number}',
+                    extra_tags='customer_order'  # 添加标记
+                )
                 return redirect('customer_order_create')
             except Exception as e:
-                messages.error(request, f'订单提交失败: {str(e)}')
+                messages.error(
+                    request, 
+                    f'订单提交失败: {str(e)}',
+                    extra_tags='customer_order'  # 添加标记
+                )
         else:
             messages.error(request, '请检查表单中的错误')
     else:

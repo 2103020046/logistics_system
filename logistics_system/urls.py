@@ -28,4 +28,5 @@ urlpatterns = [
     path('company_website/', include('company_website.urls')),  # 公司官网URL
     path('custom_template/', include('custom_template.urls')),
     path('customer_order/', include('customer_orders.urls')),
+    path('finance/', include('finance.urls')),
 ]
