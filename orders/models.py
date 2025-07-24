@@ -76,6 +76,9 @@ class Order(models.Model):
             self.order_number = f"{date_str}-{new_seq:02d}"
             
         super().save(*args, **kwargs)
+    class Meta:
+        verbose_name = '新增订单'
+        verbose_name_plural = '新增订单'
 
 class Item(models.Model):
     # 关联到订单

@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-aazwev_hcb@#nfzf+w32#yzbeucunupk3nf#rmihvw@%r02+ou
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['8.148.235.214']
+ALLOWED_HOSTS = [
+    'gzdxj.top',
+    'www.gzdxj.top',
+    '8.148.235.214',  # 可选：如果你还想通过 IP 访问
+    # 其他允许的域名
+]
 
 # Application definition
 
@@ -38,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'orders.apps.OrdersConfig',
     'custom_template',
+    'customer_orders',
+    'company_website',
 ]
 
 MIDDLEWARE = [
