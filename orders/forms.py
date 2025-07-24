@@ -6,13 +6,24 @@ from .models import Order, Item
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['order_number', 'sender', 'sender_phone', 'sender_address', 'product_code', 'receiver',
-                  'receiver_phone',
-                  'receiver_address', 'total_freight', 'payment_method', 'return_requirement', 'other_expenses',
-                  'expense_details', 'carrier', 'carrier_address', 'arrival_address', 'departure_station_phone',
-                  'arrival_station_phone', 'customer_order_no', 'date', 'departure_station', 'arrival_station',
-                  'transport_method', 'delivery_method', 'sender_sign', 'receiver_sign', 'id_card', 'order_maker',
-                  'fee_wan', 'fee_qian', 'fee_shi', 'fee_ge', 'fee_bai', 'company_name']
+        fields = '__all__'
+    
+    def clean_order_number(self):
+        order_number = self.cleaned_data['order_number']
+        user = self.instance.user if self.instance else self.initial.get('user')
+        
+        if not user:
+            raise forms.ValidationError("无法确定用户信息")
+            
+        # 检查当前用户下订单号是否唯一
+        qs = Order.objects.filter(user=user, order_number=order_number)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+            
+        if qs.exists():
+            raise forms.ValidationError("该订单号已被当前用户使用")
+            
+        return order_number
 
 
 ItemFormSet = forms.inlineformset_factory(Order, Item, fields=('item_name', 'package_type', 'quantity', 'weight',

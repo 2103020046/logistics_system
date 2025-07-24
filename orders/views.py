@@ -486,12 +486,17 @@ def export_orders(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.utils import timezone
+from .models import Order
 
-# 获取当天订单数量，生成运单号
-@csrf_exempt
+@login_required
 def get_today_order_count(request):
-    if request.method == 'GET':
-        today = datetime.now().date()
-        count = Order.objects.filter(date=today.strftime("%Y-%m-%d")).count()
-        return JsonResponse({'count': count})
-    return JsonResponse({'count': 0})
+    today = timezone.now().date()
+    date_str = today.strftime('%Y%m%d')
+    count = Order.objects.filter(
+        user=request.user,
+        order_number__startswith=date_str
+    ).count()
+    return JsonResponse({'count': count})
