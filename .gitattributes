@@ -1,0 +1,2 @@
+# 自动选择本地版本的迁移文件，避免冲突
+migrations/*.py merge=ours
