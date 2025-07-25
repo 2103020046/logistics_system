@@ -9,3 +9,8 @@ env/
 
 .DS_Store
 Thumbs.db
+
+
+/static_collected/
+*.tar.gz
+*.sql

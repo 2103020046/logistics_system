@@ -77,6 +77,11 @@ class Order(models.Model):
             
         super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = '新增订单'
+        verbose_name_plural = '新增订单'
+
+
 class Item(models.Model):
     # 关联到订单
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)

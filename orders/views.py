@@ -493,6 +493,7 @@ from .models import Order
 
 @login_required
 def get_today_order_count(request):
+
     # 修复日期格式匹配问题（原代码使用strftime('%Y%m%d')生成日期前缀）
     today = timezone.now().date()
     date_prefix = today.strftime('%Y%m%d')  # 与订单号生成的日期前缀格式一致
@@ -502,5 +503,11 @@ def get_today_order_count(request):
         user=request.user,
         order_number__startswith=date_prefix
     ).count()
-    
+
+    today = timezone.now().date()
+    date_str = today.strftime('%Y%m%d')
+    count = Order.objects.filter(
+        user=request.user,
+        order_number__startswith=date_str
+    ).count()
     return JsonResponse({'count': count})
