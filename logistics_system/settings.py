@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-aazwev_hcb@#nfzf+w32#yzbeucunupk3nf#rmihvw@%r02+ou'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['8.148.235.214']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'orders.apps.OrdersConfig',
     'custom_template',
+    'customer_orders',
+    'company_website',
+    'finance.apps.FinanceConfig',
 ]
 
 MIDDLEWARE = [
@@ -77,11 +80,6 @@ WSGI_APPLICATION = 'logistics_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-	'NAME': 'logistics_system',
-        'USER': 'logistics_user',
-        'PASSWORD': '**********',
-        'HOST': 'localhost',
-        'PORT': '3306',
         'OPTIONS': {
             'read_default_file': 'my.cnf',
         },
@@ -121,8 +119,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-# settings.py
-STATIC_ROOT = '/var/www/logistics/static_collected'  # 必须是绝对路径
 
 LOGIN_URL = '/login/'  # 登录页面的URL
 
@@ -135,6 +131,3 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
