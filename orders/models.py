@@ -77,6 +77,7 @@ class Order(models.Model):
             
         super().save(*args, **kwargs)
 
+
 class Item(models.Model):
     # 关联到订单
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
