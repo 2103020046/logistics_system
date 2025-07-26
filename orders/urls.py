@@ -16,5 +16,5 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     path('orders/export/', export_orders, name='export_orders'),
-    path('api/today_count/', get_today_order_count, name='today_order_count'),
+    path('api/orders/today_count/', get_today_order_count, name='today_order_count'),
 ]

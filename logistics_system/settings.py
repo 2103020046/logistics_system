@@ -23,14 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-aazwev_hcb@#nfzf+w32#yzbeucunupk3nf#rmihvw@%r02+ou'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    'gzdxj.top',
-    'www.gzdxj.top',
-    '8.148.235.214',  # 可选：如果你还想通过 IP 访问
-    # 其他允许的域名
-]
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -85,11 +80,6 @@ WSGI_APPLICATION = 'logistics_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-	'NAME': 'logistics_system',
-        'USER': 'logistics_user',
-        'PASSWORD': 'ZJ297503.com!',
-        'HOST': 'localhost',
-        'PORT': '3306',
         'OPTIONS': {
             'read_default_file': 'my.cnf',
         },
@@ -117,20 +107,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'  # 修改为中文
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'  # 原值为'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = True  # 保持True但使用上海时区
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-# settings.py
-STATIC_ROOT = '/var/www/logistics/static_collected'  # 必须是绝对路径
 
 LOGIN_URL = '/login/'  # 登录页面的URL
 
@@ -143,6 +131,3 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
